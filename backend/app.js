@@ -25,6 +25,12 @@ const userRoutes = require("./routes/userRoutes");
 const port = process.env.PORT || 5000;
 const mongoURL = process.env.MONGO_URL;
 
+app.use(cors({
+  origin: "https://jharkhand-ashen.vercel.app/",
+  credentials: true
+}));
+
+
 app.use(express.json());
 
 // Default Route
