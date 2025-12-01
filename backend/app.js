@@ -51,18 +51,18 @@ mongoose
 
 // Routes
 app.use("/uploads", express.static("uploads"));
-app.use('/api/auth', authRoutes);
-app.use("/api/users", userRoutes);
-app.use('/api/places', placeRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/cultures',cultureRoutes);
-app.use('/api/order',orderRoutes);
-app.use("/api/itinerary", itineraryRoutes);
-app.use("/api/chat", chatRoutes);
-app.use('/api/analyze', analyzeRoutes);
-app.use('/api/feedback', feedbackRoutes);
-app.use("/api/guides", guideRoutes);
+app.use('/auth', authRoutes);
+app.use("/users", userRoutes);
+app.use('/places', placeRoutes);
+app.use('/products', productRoutes);
+app.use('/cart', cartRoutes);
+app.use('/cultures',cultureRoutes);
+app.use('/order',orderRoutes);
+app.use("/itinerary", itineraryRoutes);
+app.use("/chat", chatRoutes);
+app.use('/analyze', analyzeRoutes);
+app.use('/feedback', feedbackRoutes);
+app.use("/guides", guideRoutes);
 // Start Server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
