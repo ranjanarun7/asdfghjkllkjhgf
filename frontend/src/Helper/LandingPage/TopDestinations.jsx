@@ -74,7 +74,7 @@ function TopDestinations() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <section className="relative min-h-screen bg-black bg-opacity-90 text-white overflow-hidden">
+    <section className="relative max-h-screen  bg-black bg-opacity-90 text-white overflow-hidden">
       {/* ⭐ Full-screen blurred background */}
       <div
         className="absolute inset-0 bg-cover bg-center backdrop-blur-2xl scale-105 bg-transparent opacity-50 transition-all duration-700"
