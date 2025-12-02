@@ -75,3 +75,12 @@ h1, h2, h3 {
   pointer-events: auto !important;
 }
 
+/* Mobile Fix */
+@media (max-width:768px){
+  .h-screen { height: auto !important; }
+}
+@media(max-width:640px){
+  h1 { font-size: 2rem!important;}
+  h2 { font-size: 1.6rem!important;}
+  p { font-size: 0.9rem!important;}
+}

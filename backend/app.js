@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 const cors = require("cors");
-app.use(cors());
 
 const authRoutes = require('./routes/authRoutes.js');
 const placeRoutes = require('./routes/placeRoutes.js');
@@ -26,9 +25,13 @@ const port = process.env.PORT || 5000;
 const mongoURL = process.env.MONGO_URL;
 
 app.use(cors({
-  origin: "https://jharkhand-ashen.vercel.app",
+  origin: [
+    "http://localhost:3000",
+    "https://jharkhand-ashen.vercel.app"
+  ],
   credentials: true
 }));
+
 
 
 

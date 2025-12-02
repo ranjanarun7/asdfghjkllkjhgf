@@ -224,9 +224,9 @@ useEffect(() => {
     <div className="min-h-screen bg-slate-50 flex font-sans text-slate-800">
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
-      <main className="flex-1 md:ml-64 p-8 overflow-y-auto relative">
+      <main className="flex-1 md:ml-9 p-4 md:p-8 pt-16 md:pt-8">
         {/* Notifications Overlay */}
-        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        <div className="fixed top-20 md:top-4 right-3 md:right-4 max-w-[90vw]">
           {notifications.map((n) => (
             <Toast key={n.id} notification={n} onClose={removeNotification} />
           ))}
@@ -255,7 +255,7 @@ useEffect(() => {
                 : "Manage dashboard preferences."}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <input
               type="file"
               ref={fileInputRef}
@@ -399,8 +399,7 @@ const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApprov
             Visitor Traffic Trends
           </h3>
           <div
-            className="h-[300px] w-full"
-            style={{ width: "100%", height: 400 }}
+            className="w-full h-72 sm:h-80 md:h-96"
           >
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.visitsOverTime}>
@@ -647,12 +646,12 @@ const DestinationsView = ({ destinations }) => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
         <h2 className="text-2xl font-bold text-slate-800">
           All Destinations Performance
         </h2>
         <div className="relative">
-          <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-5 h-5 absolute left-3 top-1/3 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchTerm}

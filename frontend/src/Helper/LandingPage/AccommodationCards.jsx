@@ -20,13 +20,13 @@ export default function AccommodationCards() {
   ];
 
   return (
-    <div className="h-screen w-full bg-cover bg-center p-10" style={{ backgroundImage: `url('https://media.istockphoto.com/id/2152670211/photo/empty-wooden-table-orange-bed-and-mockup-dark-green-wall-in-bedroom-interior-3d-rendering.jpg?s=612x612&w=0&k=20&c=7VULnwSsujWGolebD68R6SdZrzrxv0wKyHxCSPz1EN4=')` }}>
+    <div className="min-h-screen w-full bg-cover bg-center p-10" style={{ backgroundImage: `url('https://media.istockphoto.com/id/2152670211/photo/empty-wooden-table-orange-bed-and-mockup-dark-green-wall-in-bedroom-interior-3d-rendering.jpg?s=612x612&w=0&k=20&c=7VULnwSsujWGolebD68R6SdZrzrxv0wKyHxCSPz1EN4=')` }}>
       <h1 className="text-4xl md:text-5xl font-bold text-center text-white mb-8 drop-shadow-lg mt-4">
         Your Next Getaway - Book Stays & Events
       </h1>
       <div className="w-56 h-1 bg-yellow-100 mx-auto mb-12"></div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8" style={{ height: '460px' }}>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:h-96">
         {cards.map((c, i) => (
           <a
             key={i}

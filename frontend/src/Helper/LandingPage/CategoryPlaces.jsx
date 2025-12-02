@@ -71,6 +71,9 @@ function CategoryPlaces() {
   return offset;
 };
 
+const isMobile = window.innerWidth < 768;
+
+
   return (
     <section className="pt-16 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -104,6 +107,7 @@ function CategoryPlaces() {
           <div className="relative w-full flex flex-col items-center py-16">
 
       {/* BACKGROUND FADE */}
+      {!isMobile && (
       <motion.div
         className="absolute inset-0 -z-10 opacity-60 blur-3xl"
         animate={{ backgroundImage: `url(${cards[active].img})` }}
@@ -113,6 +117,7 @@ function CategoryPlaces() {
           backgroundPosition: "center",
         }}
       />
+      )}
 
       {/* LEFT BLUR EDGE */}
       <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none blur-xl"></div>
@@ -135,10 +140,13 @@ function CategoryPlaces() {
         style={{ perspective: "1600px", height: "550px", width: "100%" }}
       >
         {cards.map((card, index) => {
+  if (isMobile && index !== active) return null;
+
           const offset = getCircularOffset(index, active, cards.length);
-          const scale = offset === 0 ? 1.30 : 0.85;
-          const rotateY = offset * -30;
-          const translateX = offset * 240;
+         const scale = isMobile ? 1 : offset === 0 ? 1.3 : 0.85;
+const rotateY = isMobile ? 0 : offset * -30;
+const translateX = isMobile ? 0 : offset * 240;
+
 
 
           return (
