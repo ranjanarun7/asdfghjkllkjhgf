@@ -10,6 +10,7 @@ import Visits from "../Helper/LandingPage/Visits";
 import Chatbot from "../Helper/LandingPage/Chatbot";
 import AccommodationCards from "../Helper/LandingPage/AccommodationCards";
 import Reveal from "../components/Reveal";
+import About from "../Helper/LandingPage/About";
 
 function LandingPage() {
   return (
@@ -39,10 +40,11 @@ function LandingPage() {
       <Reveal>
         <Stories />
       </Reveal>
-
+      <About />
       <Reveal>
         <Visits />
       </Reveal>
+      
 
       {/* Chat fixed - no animation */}
       <Chatbot />

@@ -102,7 +102,7 @@ function TopDestinations() {
         />
 
         {/* ⭐ MAIN CARD WITH SLIDE ANIMATION */}
-        <div className="relative w-full flex rounded-xl overflow-hidden shadow-2xl">
+        <div className="relative w-full flex rounded-xl overflow-hidden shadow-2xl mb-2">
           <div
             className="relative w-full rounded-xl overflow-hidden shadow-2xl h-64  md:h-96">
             {/* Slide wrapper */}

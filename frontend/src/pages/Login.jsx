@@ -8,7 +8,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const location = useLocation();
   const navigate = useNavigate();
-  const redirectTo = location.state?.from || "/itinerary";
+  const redirectTo = location.state?.from || "/";
   const { login } = useAuth();
 
 
@@ -29,8 +29,14 @@ const Login = () => {
   localStorage.setItem("userId", data.user._id);
   login(data.user);
 
-  navigate(redirectTo);
+  // ✅ Admin check
+  if (data.user.isAdmin) {
+    navigate("/admin");
+  } else {
+    navigate(redirectTo);
+  }
 }
+
 
   };
 

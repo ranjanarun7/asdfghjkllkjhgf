@@ -76,19 +76,7 @@ router.post('/', async (req, res) => {
     if (!raw) throw new Error("Gemini returned empty response");
 
     const result = JSON.parse(raw);
-
-    // ✅ SAVE ANALYSIS INTO MONGODB
-    const updated = await Feedback.findByIdAndUpdate(
-      feedback._id,
-      { analysis: result, status: "analyzed" },
-      { new: true }
-    );
-
-    res.json({
-      ...updated.toObject(),
-      analyzedAt: new Date().toISOString()
-    });
-
+    return res.json(result);
   } catch (err) {
     console.error("Gemini error:", err);
     res.status(500).json({ error: "Gemini analysis failed" });

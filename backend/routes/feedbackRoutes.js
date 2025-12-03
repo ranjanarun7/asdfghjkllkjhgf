@@ -8,14 +8,21 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const data = await Feedback.create(req.body);
-axios.post("http://localhost:5000/api/analyze", data);
+    const aiRes = await axios.post("http://localhost:5000/analyze", {
+      comment: data.comment,
+      rating: data.rating,
+      targetName: data.targetName,
+    });
+    data.analysis = aiRes.data;
+    data.status = "analyzed";
+    await data.save();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to save feedback' });
+    console.error("AI analyze error:", err.message);
+    res.status(500).json({ error: 'Failed to analyze feedback' });
   }
 });
 
-/* GET ALL FEEDBACK */
 router.get('/', async (req, res) => {
   const feedback = await Feedback.find().sort({ createdAt: -1 });
 
