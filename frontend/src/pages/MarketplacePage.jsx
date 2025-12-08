@@ -1,14 +1,17 @@
-import React, { useMemo, useState,useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { MarketplaceDetail } from "../components/MarketplaceDetail";
 
 
 
 const MarketplacePage = () => {
   const [products, setProducts] = useState([]);
+  const [showDetails, setShowDetails] = useState(false); // New state for toggling view
+
   // fetch products from backend
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/products`)
@@ -25,9 +28,12 @@ const MarketplacePage = () => {
     return products.filter((p) => p.category === selectedCategory);
   }, [products, selectedCategory]);
 
-  
-const { cart, addToCart } = useCart();
 
+  const { cart, addToCart } = useCart();
+
+  if (showDetails) {
+    return <MarketplaceDetail onBack={() => setShowDetails(false)} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral">
@@ -40,86 +46,82 @@ const { cart, addToCart } = useCart();
 
         <div className="flex flex-col md:flex-row items-center md:justify-between w-full mb-8">
 
-  {/* Category Buttons - Always Center */}
-  <div className="flex flex-wrap gap-4 justify-center items-center md:mb-0 mb-6 w-full">
-    <button
-      onClick={() => setSelectedCategory('all')}
-      className={`px-4 py-2 rounded-full ${
-        selectedCategory === 'all'
-          ? 'bg-primary text-white'
-          : 'bg-white text-gray-700 hover:bg-gray-100'
-      }`}
-    >
-      All Items
-    </button>
+          {/* Category Buttons - Always Center */}
+          <div className="flex flex-wrap gap-4 justify-center items-center md:mb-0 mb-6 w-full">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2 rounded-full ${selectedCategory === 'all'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              All Items
+            </button>
 
-    <button
-      onClick={() => setSelectedCategory('handicraft')}
-      className={`px-4 py-2 rounded-full ${
-        selectedCategory === 'handicraft'
-          ? 'bg-primary text-white'
-          : 'bg-white text-gray-700 hover:bg-gray-100'
-      }`}
-    >
-      Handicrafts
-    </button>
+            <button
+              onClick={() => setSelectedCategory('handicraft')}
+              className={`px-4 py-2 rounded-full ${selectedCategory === 'handicraft'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              Handicrafts
+            </button>
 
-    <button
-      onClick={() => setSelectedCategory('homestay')}
-      className={`px-4 py-2 rounded-full ${
-        selectedCategory === 'homestay'
-          ? 'bg-primary text-white'
-          : 'bg-white text-gray-700 hover:bg-gray-100'
-      }`}
-    >
-      Homestays
-    </button>
+            <button
+              onClick={() => setSelectedCategory('homestay')}
+              className={`px-4 py-2 rounded-full ${selectedCategory === 'homestay'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              Homestays
+            </button>
 
-    <button
-      onClick={() => setSelectedCategory('event')}
-      className={`px-4 py-2 rounded-full ${
-        selectedCategory === 'event'
-          ? 'bg-primary text-white'
-          : 'bg-white text-gray-700 hover:bg-gray-100'
-      }`}
-    >
-      Events
-    </button>
-  </div>
+            <button
+              onClick={() => setSelectedCategory('event')}
+              className={`px-4 py-2 rounded-full ${selectedCategory === 'event'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              Events
+            </button>
+          </div>
 
-  {/* Cart Button - Always Right */}
-  <div className="md:ml-auto">
-    <Link to="/cart">
-      <div className="relative flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full shadow-md hover:bg-primary-focus transition cursor-pointer">
+          {/* Cart Button - Always Right */}
+          <div className="md:ml-auto">
+            <Link to="/cart">
+              <div className="relative flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full shadow-md hover:bg-primary-focus transition cursor-pointer">
 
-        {/* Cart Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.3 6.5M7 13l1.3 6.5M17 13l1.3 6.5M17 13L15.7 19.5M6 21h.01M18 21h.01"
-          />
-        </svg>
+                {/* Cart Icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.3 6.5M7 13l1.3 6.5M17 13l1.3 6.5M17 13L15.7 19.5M6 21h.01M18 21h.01"
+                  />
+                </svg>
 
-        <span className="text-base font-semibold">Cart</span>
+                <span className="text-base font-semibold">Cart</span>
 
-        {cart.length > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-600 text-xs font-bold text-white rounded-full px-2 py-1">
-            {cart.length}
-          </span>
-        )}
-      </div>
-    </Link>
-  </div>
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-xs font-bold text-white rounded-full px-2 py-1">
+                    {cart.length}
+                  </span>
+                )}
+              </div>
+            </Link>
+          </div>
 
-</div>
+        </div>
 
 
         {/* product grid */}
@@ -127,11 +129,12 @@ const { cart, addToCart } = useCart();
           {filteredProducts.map((product) => (
             <motion.div
               key={product._id}
-              className="card overflow-hidden"
+              className="card overflow-hidden cursor-pointer" // Added cursor-pointer
               whileHover={{ y: -5 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5}}
+              transition={{ duration: 0.5 }}
+              onClick={() => setShowDetails(true)} // Added onClick
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -165,12 +168,12 @@ const { cart, addToCart } = useCart();
               <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-semibold">{product.name}</h3>
-                  <div className="text-lg font-bold text-primary">₹{product.price}</div>
+
                 </div>
 
                 <p className="text-gray-600 text-sm mb-4">{product.description}</p>
 
-                <button className="btn-primary w-full" onClick={() => addToCart(product)}>Add to cart</button>
+
               </div>
             </motion.div>
           ))}
