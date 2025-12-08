@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import VerifiedGuides from "../components/VerifiedGuides";
 import { motion } from "framer-motion";
 import {
   MapPin,
@@ -171,8 +172,8 @@ function PlaceDetailsPage() {
     const a =
       Math.sin(dLat / 2) ** 2 +
       Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) ** 2;
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) ** 2;
 
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
@@ -252,11 +253,10 @@ function PlaceDetailsPage() {
 
   const openInGoogleMaps = () => {
     if (coords) {
-      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${
-        coords.latitude
-      },${coords.longitude}&destination=${encodeURIComponent(
-        place.location
-      )}&travelmode=driving`;
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${coords.latitude
+        },${coords.longitude}&destination=${encodeURIComponent(
+          place.location
+        )}&travelmode=driving`;
       window.open(googleMapsUrl, "_blank");
     } else {
       alert("Current location not available.");
@@ -423,9 +423,8 @@ function PlaceDetailsPage() {
               {images.map((_, i) => (
                 <div
                   key={i}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    current === i ? "bg-blue-600 w-5" : "bg-gray-300"
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-all ${current === i ? "bg-blue-600 w-5" : "bg-gray-300"
+                    }`}
                 />
               ))}
             </div>
@@ -575,9 +574,8 @@ function PlaceDetailsPage() {
 
           <div className="flex items-center space-x-2">
             <span
-              className={`w-3 h-3 rounded-full ${
-                tracking ? "bg-green-500" : "bg-gray-400"
-              }`}
+              className={`w-3 h-3 rounded-full ${tracking ? "bg-green-500" : "bg-gray-400"
+                }`}
             />
             <span className="text-black font-medium">
               {tracking ? "Live tracking active" : "Live tracking inactive"}
@@ -665,6 +663,13 @@ function PlaceDetailsPage() {
             </motion.button>
           ))}
         </section>
+        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl mt-12 border border-white/20">
+          <h2 className="text-3xl font-bold text-black mb-6 flex items-center gap-3">
+            <ShieldAlert className="text-green-600" /> Verified Guides
+          </h2>
+          <VerifiedGuides />
+        </div>
+
       </div>
 
       {/* Nearby Places Section */}

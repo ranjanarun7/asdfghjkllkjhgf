@@ -13,13 +13,49 @@ import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 
+import { useNavigate } from "react-router-dom"; // Add import
+
 const ProfilePage = () => {
+  const navigate = useNavigate(); // Add hook
   const [isEditing, setIsEditing] = useState(false);
   const [region, setRegion] = useState("");
   const [language, setLanguage] = useState("");
   const [document, setDocument] = useState(null);
   const [guideInfo, setGuideInfo] = useState(null);
   const { user, setUser, loading } = useAuth();
+
+  // Local state for form data
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    bio: "",
+    avatar: "",
+    coverPhoto: ""
+  });
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/login");
+    }
+  }, [loading, user, navigate]);
+
+  // Initialize form data when entering edit mode
+  useEffect(() => {
+    if (isEditing && user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        location: user.location || "",
+        bio: user.bio || "",
+        avatar: user.avatar || "",
+        coverPhoto: user.coverPhoto || ""
+      });
+    }
+  }, [isEditing, user]);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -31,17 +67,7 @@ const ProfilePage = () => {
   }, [user]);
 
   if (loading) return <div>Loading...</div>;
-  if (!user) return <div>Please login again</div>;
-
-  /* const [user, setUser] = useState({
-    name: "Rahul Sharma",
-    email: "rahul.sharma@example.com",
-    phone: "+91 9876543210",
-    location: "Ranchi, Jharkhand",
-    bio: "Nature lover, avid traveler, and photography enthusiast. Exploring Jharkhand one forest at a time.",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop",
-  }); */
+  if (!user) return null; // Return null while redirecting
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -53,18 +79,9 @@ const ProfilePage = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            // agar token store kar rahe ho to:
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
           },
-          body: JSON.stringify({
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            location: user.location,
-            bio: user.bio,
-            avatar: user.avatar,
-            coverPhoto: user.coverPhoto,
-          }),
+          body: JSON.stringify(formData),
         }
       );
 
@@ -80,6 +97,10 @@ const ProfilePage = () => {
       console.error(err);
       alert("Something went wrong");
     }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleGuideSubmit = async (e) => {
@@ -134,7 +155,7 @@ const ProfilePage = () => {
               <div className="h-48 bg-green-900 relative">
                 <img
                   src={
-                    user?.coverPhoto ||
+                    (isEditing ? formData.coverPhoto : user?.coverPhoto) ||
                     "https://images.unsplash.com/photo-1626246473523-289552cb874a?q=80&w=1600&auto=format&fit=crop"
                   }
                   alt="Cover"
@@ -144,8 +165,12 @@ const ProfilePage = () => {
                 <div className="absolute -bottom-16 left-8">
                   <div className="relative">
                     <img
-                      src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"}
+                      src={(isEditing ? formData.avatar : user?.avatar) || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"}
                       alt={user.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde";
+                      }}
                       className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                     />
 
@@ -168,7 +193,7 @@ const ProfilePage = () => {
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-3xl font-playfair font-bold text-green-900">
-                        {user.name}
+                        {isEditing ? formData.name : user.name}
                       </h2>
 
                       {guideInfo?.status === "approved" && (
@@ -203,10 +228,9 @@ const ProfilePage = () => {
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Full Name</label>
                         <input
                           type="text"
-                          value={user.name}
-                          onChange={(e) =>
-                            setUser({ ...user, name: e.target.value })
-                          }
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                         />
                       </div>
@@ -216,10 +240,9 @@ const ProfilePage = () => {
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Location</label>
                         <input
                           type="text"
-                          value={user.location}
-                          onChange={(e) =>
-                            setUser({ ...user, location: e.target.value })
-                          }
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                         />
                       </div>
@@ -231,10 +254,9 @@ const ProfilePage = () => {
                           <Mail className="absolute left-4 top-3.5 text-gray-400" size={18} />
                           <input
                             type="email"
-                            value={user.email}
-                            onChange={(e) =>
-                              setUser({ ...user, email: e.target.value })
-                            }
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             className="w-full p-3 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           />
                         </div>
@@ -247,10 +269,9 @@ const ProfilePage = () => {
                           <Phone className="absolute left-4 top-3.5 text-gray-400" size={18} />
                           <input
                             type="tel"
-                            value={user.phone}
-                            onChange={(e) =>
-                              setUser({ ...user, phone: e.target.value })
-                            }
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
                             className="w-full p-3 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           />
                         </div>
@@ -261,10 +282,9 @@ const ProfilePage = () => {
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Profile Photo URL</label>
                         <input
                           type="text"
-                          value={user.avatar || ""}
-                          onChange={(e) =>
-                            setUser({ ...user, avatar: e.target.value })
-                          }
+                          name="avatar"
+                          value={formData.avatar}
+                          onChange={handleChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           placeholder="Paste avatar image link"
                         />
@@ -275,10 +295,9 @@ const ProfilePage = () => {
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Cover Photo URL</label>
                         <input
                           type="text"
-                          value={user.coverPhoto || ""}
-                          onChange={(e) =>
-                            setUser({ ...user, coverPhoto: e.target.value })
-                          }
+                          name="coverPhoto"
+                          value={formData.coverPhoto}
+                          onChange={handleChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           placeholder="Paste cover image link"
                         />
@@ -289,10 +308,9 @@ const ProfilePage = () => {
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Bio</label>
                         <textarea
                           rows={4}
-                          value={user.bio}
-                          onChange={(e) =>
-                            setUser({ ...user, bio: e.target.value })
-                          }
+                          name="bio"
+                          value={formData.bio}
+                          onChange={handleChange}
                           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all resize-none"
                         />
                       </div>
@@ -372,16 +390,16 @@ const ProfilePage = () => {
                           Region Expertise
                         </label>
                         <select
-                          className="w-full p-3 rounded-xl bg-white/10 border border-green-600/30 text-white focus:outline-none focus:bg-green-800 focus:border-green-400 transition-colors"
+                          className="w-full p-3 rounded-xl bg-white border border-green-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all shadow-sm"
                           value={region}
                           onChange={(e) => setRegion(e.target.value)}
                           required
                         >
-                          <option className="text-black" value="">Select Region</option>
-                          <option className="text-black">Ranchi & Surroundings</option>
-                          <option className="text-black">Netarhat & Latehar</option>
-                          <option className="text-black">Deoghar & Santhal Pargana</option>
-                          <option className="text-black">Jamshedpur & Dalma</option>
+                          <option value="">Select Region</option>
+                          <option value="Ranchi & Surroundings">Ranchi & Surroundings</option>
+                          <option value="Netarhat & Latehar">Netarhat & Latehar</option>
+                          <option value="Deoghar & Santhal Pargana">Deoghar & Santhal Pargana</option>
+                          <option value="Jamshedpur & Dalma">Jamshedpur & Dalma</option>
                         </select>
                       </div>
 
@@ -392,7 +410,7 @@ const ProfilePage = () => {
                         <input
                           type="text"
                           placeholder="e.g. Hindi, English, Santhali"
-                          className="w-full p-3 rounded-xl bg-white/10 border border-green-600/30 text-white placeholder-green-300/50 focus:outline-none focus:bg-green-800 focus:border-green-400 transition-colors"
+                          className="w-full p-3 rounded-xl bg-white border border-green-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all shadow-sm"
                           value={language}
                           onChange={(e) => setLanguage(e.target.value)}
                           required

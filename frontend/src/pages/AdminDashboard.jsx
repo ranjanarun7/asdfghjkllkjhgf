@@ -73,11 +73,11 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const [guides, setGuides] = useState([]);
 
-useEffect(() => {
-  fetch(`${process.env.REACT_APP_BACKEND_URL}/guides`)
-    .then(res => res.json())
-    .then(setGuides);
-}, []);
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/guides`)
+      .then(res => res.json())
+      .then(setGuides);
+  }, []);
 
 
   const addNotification = (type, message) => {
@@ -191,20 +191,36 @@ useEffect(() => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
   const approveGuide = async (id) => {
-  try {
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/guides/approve/${id}`, {
-      method: "PUT",
-    });
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/guides/approve/${id}`, {
+        method: "PUT",
+      });
 
-    setGuides((prev) =>
-      prev.map((g) => (g._id === id ? { ...g, status: "approved" } : g))
-    );
+      setGuides((prev) =>
+        prev.map((g) => (g._id === id ? { ...g, status: "approved" } : g))
+      );
 
-    addNotification("success", "Guide approved");
-  } catch (err) {
-    addNotification("error", "Approval failed");
-  }
-};
+      addNotification("success", "Guide approved");
+    } catch (err) {
+      addNotification("error", "Approval failed");
+    }
+  };
+
+  const unverifyGuide = async (id) => {
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/guides/unverify/${id}`, {
+        method: "PUT",
+      });
+
+      setGuides((prev) =>
+        prev.map((g) => (g._id === id ? { ...g, status: "pending" } : g))
+      );
+
+      addNotification("success", "Guide unverified");
+    } catch (err) {
+      addNotification("error", "Unverify failed");
+    }
+  };
 
 
   if (loading && !data) {
@@ -234,13 +250,13 @@ useEffect(() => {
 
         {/* Header */}
         <header className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
-           <button
-    onClick={() => navigate("/")}
-    className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 mb-2"
-  >
-    <ArrowLeft className="w-4 h-4" />
-    Back
-  </button>
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 mb-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
               {TITLES[currentView]}
@@ -249,10 +265,10 @@ useEffect(() => {
               {currentView === "overview"
                 ? "Real-time insights into visitor trends and engagement."
                 : currentView === "destinations"
-                ? "Detailed metrics for all tourist spots."
-                : currentView === "ai-logs"
-                ? "Monitor AI interactions and user queries."
-                : "Manage dashboard preferences."}
+                  ? "Detailed metrics for all tourist spots."
+                  : currentView === "ai-logs"
+                    ? "Monitor AI interactions and user queries."
+                    : "Manage dashboard preferences."}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -293,23 +309,24 @@ useEffect(() => {
 
         {/* Views */}
         {data && (
-  <>
-    {currentView === "overview" && (
-      <OverviewView
-        data={data}
-        aiAnalysis={aiAnalysis}
-        onDismissAi={() => setAiAnalysis("")}
-        setView={setCurrentView}
-        guides={guides}
-        onApproveGuide={approveGuide}
-      />
-    )}
-    {currentView === "destinations" && (
-      <DestinationsView destinations={data.topDestinations} />
-    )}
-    {currentView === "ai-logs" && <AiLogsView logs={aiLogs} />}
-  </>
-)}
+          <>
+            {currentView === "overview" && (
+              <OverviewView
+                data={data}
+                aiAnalysis={aiAnalysis}
+                onDismissAi={() => setAiAnalysis("")}
+                setView={setCurrentView}
+                guides={guides}
+                onApproveGuide={approveGuide}
+                onUnverifyGuide={unverifyGuide}
+              />
+            )}
+            {currentView === "destinations" && (
+              <DestinationsView destinations={data.topDestinations} />
+            )}
+            {currentView === "ai-logs" && <AiLogsView logs={aiLogs} />}
+          </>
+        )}
 
       </main>
     </div>
@@ -318,7 +335,7 @@ useEffect(() => {
 
 // --- Sub Components ---
 
-const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApproveGuide }) => {
+const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApproveGuide, onUnverifyGuide }) => {
   return (
     <div className="animate-fadeIn space-y-8">
       {/* AI Insights Panel */}
@@ -360,11 +377,10 @@ const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApprov
         <StatCard
           title="Directions Requested"
           value={data.totalDirections.toLocaleString()}
-          change={`${
-            data.totalVisitors > 0
-              ? ((data.totalDirections / data.totalVisitors) * 100).toFixed(1)
-              : 0
-          }% conversion`}
+          change={`${data.totalVisitors > 0
+            ? ((data.totalDirections / data.totalVisitors) * 100).toFixed(1)
+            : 0
+            }% conversion`}
           trend="up"
           icon={Navigation}
           colorClass="text-emerald-600"
@@ -372,11 +388,10 @@ const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApprov
         <StatCard
           title="AI Assistant Queries"
           value={data.totalAiQueries.toLocaleString()}
-          change={`${
-            data.totalVisitors > 0
-              ? (data.totalAiQueries / data.totalVisitors).toFixed(1)
-              : 0
-          } per user avg`}
+          change={`${data.totalVisitors > 0
+            ? (data.totalAiQueries / data.totalVisitors).toFixed(1)
+            : 0
+            } per user avg`}
           trend="up"
           icon={MessageSquareMore}
           colorClass="text-purple-600"
@@ -577,51 +592,81 @@ const OverviewView = ({ data, aiAnalysis, onDismissAi, setView, guides, onApprov
         </div>
       </div>
       <div className="bg-white p-6 rounded-xl mt-8">
-  <h3 className="font-bold mb-4">Guide Requests</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-lg">Guide Management</h3>
 
-  {guides.length === 0 ? (
-    <p className="italic text-gray-500 text-sm">No requests yet</p>
-  ) : (
-    <table className="w-full text-sm border">
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="p-2">Name</th>
-          <th className="p-2">Region</th>
-          <th className="p-2">Language</th>
-          <th className="p-2">Document</th>
-          <th className="p-2">Status</th>
-          <th className="p-2">Action</th>
-        </tr>
-      </thead>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Enter Guide ID to Unverify"
+              className="border p-2 rounded text-sm w-64"
+              id="unverifyInput"
+            />
+            <button
+              onClick={() => {
+                const id = document.getElementById('unverifyInput').value;
+                if (id) onUnverifyGuide(id);
+              }}
+              className="bg-red-100 text-red-700 px-3 py-2 rounded text-sm font-medium hover:bg-red-200"
+            >
+              Unverify by ID
+            </button>
+          </div>
+        </div>
 
-      <tbody>
-        {guides.map((g) => (
-          <tr key={g._id}>
-            <td>{g.name}</td>
-            <td>{g.region}</td>
-            <td>{g.language}</td>
-            <td>
-              <a href={`http://localhost:5000/uploads/${g.document}`} target="_blank" className="text-blue-600">
-                View
-              </a>
-            </td>
-            <td>{g.status}</td>
-            <td>
-              {g.status !== "approved" && (
-                <button
-                  onClick={() => onApproveGuide(g._id)}
-                  className="bg-green-600 text-white px-2 py-1 rounded"
-                >
-                  Approve
-                </button>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )}
-</div>
+        {guides.length === 0 ? (
+          <p className="italic text-gray-500 text-sm">No requests yet</p>
+        ) : (
+          <table className="w-full text-sm border">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-2 text-left">ID</th>
+                <th className="p-2 text-left">Name</th>
+                <th className="p-2">Region</th>
+                <th className="p-2">Language</th>
+                <th className="p-2">Document</th>
+                <th className="p-2">Status</th>
+                <th className="p-2">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {guides.map((g) => (
+                <tr key={g._id} className="border-b">
+                  <td className="p-2 font-mono text-xs">{g._id}</td>
+                  <td className="p-2 font-medium">{g.name}</td>
+                  <td>{g.region}</td>
+                  <td>{g.language}</td>
+                  <td>
+                    <a href={`http://localhost:5000/uploads/${g.document}`} target="_blank" className="text-blue-600">
+                      View
+                    </a>
+                  </td>
+                  <td>{g.status}</td>
+                  <td>
+                    {g.status !== "approved" && (
+                      <button
+                        onClick={() => onApproveGuide(g._id)}
+                        className="bg-green-600 text-white px-2 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {g.status === "approved" && (
+                      <button
+                        onClick={() => onUnverifyGuide(g._id)}
+                        className="bg-red-600 text-white px-2 py-1 rounded ml-2"
+                      >
+                        Unverify
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
     </div>
   );
@@ -700,11 +745,10 @@ const DestinationsView = ({ destinations }) => {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`font-medium ${
-                            conversion > 0.5
-                              ? "text-emerald-600"
-                              : "text-slate-600"
-                          }`}
+                          className={`font-medium ${conversion > 0.5
+                            ? "text-emerald-600"
+                            : "text-slate-600"
+                            }`}
                         >
                           {(conversion * 100).toFixed(1)}%
                         </span>
@@ -752,11 +796,10 @@ const AiLogsView = ({ logs }) => {
             >
               <div className="flex gap-4">
                 <div
-                  className={`mt-1 p-2 rounded-full flex-shrink-0 ${
-                    log.sentiment === "Negative"
-                      ? "bg-red-100 text-red-600"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
+                  className={`mt-1 p-2 rounded-full flex-shrink-0 ${log.sentiment === "Negative"
+                    ? "bg-red-100 text-red-600"
+                    : "bg-blue-100 text-blue-600"
+                    }`}
                 >
                   <MessageSquareMore className="w-5 h-5" />
                 </div>
@@ -773,13 +816,12 @@ const AiLogsView = ({ logs }) => {
               </div>
               <div className="flex items-center gap-3 self-end md:self-auto">
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                    log.sentiment === "Positive"
-                      ? "bg-green-50 text-green-700 border-green-100"
-                      : log.sentiment === "Negative"
+                  className={`px-2 py-1 rounded-full text-xs font-medium border ${log.sentiment === "Positive"
+                    ? "bg-green-50 text-green-700 border-green-100"
+                    : log.sentiment === "Negative"
                       ? "bg-red-50 text-red-700 border-red-100"
                       : "bg-slate-50 text-slate-600 border-slate-200"
-                  }`}
+                    }`}
                 >
                   {log.sentiment}
                 </span>

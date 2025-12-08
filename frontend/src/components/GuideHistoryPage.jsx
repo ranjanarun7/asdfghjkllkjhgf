@@ -8,6 +8,7 @@ import {
   Filter,
   ArrowLeft
 } from "lucide-react";
+import VerifiedGuides from "./VerifiedGuides";
 
 // Fully rebuilt guide dataset
 const guides = [
@@ -52,14 +53,14 @@ const guides = [
 const GuideHistoryPage = () => {
   return (
     <div className="min-h-screen bg-earth-100 py-12 px-6">
-       <a href="/">
-  <button className="btn flex items-center gap-2">
-    <ArrowLeft size={18} />
-    <span>Back</span>
-  </button>
-</a>
+      <a href="/">
+        <button className="btn flex items-center gap-2">
+          <ArrowLeft size={18} />
+          <span>Back</span>
+        </button>
+      </a>
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-green-900 mb-4">
@@ -160,8 +161,18 @@ const GuideHistoryPage = () => {
             </div>
           ))}
         </div>
+
+        {/* Verified Guides Section */}
+        <div className="mt-16">
+          <h2 className="text-3xl font-serif font-bold text-green-900 mb-6 flex items-center gap-3">
+            Available Verified Guides
+            <span className="text-sm font-sans font-normal bg-green-100 text-green-800 px-3 py-1 rounded-full">Book Now</span>
+          </h2>
+          <VerifiedGuides />
+        </div>
       </div>
     </div>
+
   );
 };
 
