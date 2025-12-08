@@ -34,6 +34,7 @@ import ItineraryHistoryPage from './components/ItineraryHistoryPage';
 import GuideHistoryPage from './components/GuideHistoryPage';
 import Chat from "./pages/Chat";
 import FeedbackDashboard from './pages/FeedbackDashboard';
+import ChainView from './components/ChainView';
 
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
         <Route path="/guideHistory" element={<GuideHistoryPage />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/feedbackdashboard" element={<FeedbackDashboard />} />
+        <Route path="/chain" element={<ChainView />} />
       </Routes>
     </Router>
   );

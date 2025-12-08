@@ -122,13 +122,15 @@ const CheckoutPage = () => {
           console.log("Verify response:", verifyData);
 
           if (verifyData.success) {
-            // 4️⃣ Save order to DB after successful payment (optional but good)
+            // 4️⃣ Save order to DB after successful payment
+            const userId = localStorage.getItem("userId"); // Ensure userId is available
             await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/order/confirm`,
+              `${process.env.REACT_APP_BACKEND_URL}/order/confirm-payment`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                  userId,
                   cart,
                   address,
                   paymentId: response.razorpay_payment_id,
