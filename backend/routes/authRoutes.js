@@ -106,4 +106,67 @@ router.put("/:id", async (req, res) => {
 });
 
 
+// FORGOT PASSWORD
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    // Generate a temporary token valid for 15 mins
+    const secret = "SECRET123" + user.password; // utilizing password hash makes it one-time use if password changes
+    const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "15m" });
+
+    // Link logic
+    const link = `http://localhost:3000/reset-password?id=${user._id}&token=${token}`;
+
+    console.log("------------------------------------------");
+    console.log(`Password reset link for ${email}:`);
+    console.log(link);
+    console.log("------------------------------------------");
+
+    res.json({ success: true, message: "Reset link logged to backend console!" });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Something went wrong" });
+  }
+});
+
+// RESET PASSWORD
+router.post("/reset-password", async (req, res) => {
+  const { id, token, password } = req.body;
+
+  try {
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const secret = "SECRET123" + user.password;
+    try {
+      jwt.verify(token, secret);
+    } catch (err) {
+      return res.json({ success: false, message: "Invalid or expired token" });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    await User.updateOne(
+      { _id: id },
+      { $set: { password: encryptedPassword } }
+    );
+
+    res.json({ success: true, message: "Password updated successfully" });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Something went wrong" });
+  }
+});
+
+
 module.exports = router;

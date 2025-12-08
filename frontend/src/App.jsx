@@ -35,6 +35,8 @@ import GuideHistoryPage from './components/GuideHistoryPage';
 import Chat from "./pages/Chat";
 import FeedbackDashboard from './pages/FeedbackDashboard';
 import ChainView from './components/ChainView';
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -54,6 +56,8 @@ function App() {
         <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/CreatePlaces" element={<CreatePlaces />} />
         <Route path="/EditPlace/:id" element={<EditPlace />} />

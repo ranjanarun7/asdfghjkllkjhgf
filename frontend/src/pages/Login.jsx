@@ -84,6 +84,12 @@ const Login = () => {
               />
             </div>
 
+            <div className="flex justify-end">
+              <a href="/forgot-password" className="text-sm text-green-600 hover:text-green-800 font-medium">
+                Forgot Password?
+              </a>
+            </div>
+
             <button className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all active:scale-95">
               Sign In
             </button>
