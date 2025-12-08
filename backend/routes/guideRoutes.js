@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const Guide = require("../models/Guide");
+const { recordTransaction } = require("../services/ledgerService");
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -34,6 +35,15 @@ router.get("/", async (req, res) => {
 // Approve Guide
 router.put("/approve/:id", async (req, res) => {
   await Guide.findByIdAndUpdate(req.params.id, { status: "approved" });
+
+  // Record on Chain
+  recordTransaction({
+    type: 'GUIDE_VERIFY',
+    guideId: req.params.id,
+    status: 'Verified',
+    verifiedAt: new Date().toISOString()
+  });
+
   res.json({ approved: true });
 });
 

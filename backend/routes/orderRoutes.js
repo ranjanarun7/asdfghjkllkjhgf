@@ -5,6 +5,7 @@ const router = express.Router();
 
 const Cart = require("../models/cartModel");
 const Order = require("../models/order");
+const { recordTransaction } = require("../services/ledgerService");
 
 // ✅ CREATE ORDER + PAYMENT ID
 router.post("/create-order", async (req, res) => {
@@ -41,6 +42,16 @@ router.post("/confirm-payment", async (req, res) => {
     });
 
     await newOrder.save();
+
+    // 2. Save to Ledger (Fire and Forget)
+    recordTransaction({
+      type: 'PAYMENT',
+      orderId: newOrder.orderId,
+      paymentId: newOrder.paymentId,
+      amount: newOrder.totalAmount,
+      userId: newOrder.userId,
+      currency: "INR" // Defaulting to INR as per recent preferences
+    });
 
     // ✅ Clear cart after order success
     cart.items = [];
