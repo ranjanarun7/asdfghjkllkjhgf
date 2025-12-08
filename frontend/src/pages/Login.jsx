@@ -49,20 +49,20 @@ const Login = () => {
         <h2 className="text-xl font-bold mb-4 text-center">Login In to Your Account</h2>
         <p className="text-center text-gray-400 mb-4">Welcome back! Please enter your details.</p>
         <input
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-3 rounded"
           placeholder="Email"
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
         <input
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-3 rounded"
           type="password"
           placeholder="Password"
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
-
-        <button className="btn-primary w-full">Login</button>
-        <p>Create an account? <a href="/signup" className="text-blue-600">Signup</a></p>
+        
+        <button className="btn-primary w-full mt-4">Login</button>
+        <p className="mt-2">Create an account? <a href="/signup" className="text-blue-600">Signup</a></p>
       </form>
     </div>
     </div>

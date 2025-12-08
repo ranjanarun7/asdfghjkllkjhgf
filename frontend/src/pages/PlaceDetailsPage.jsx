@@ -28,7 +28,6 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 
-
 function PlaceDetailsPage() {
   const { id } = useParams();
   const [place, setPlace] = useState(null);
@@ -44,7 +43,6 @@ function PlaceDetailsPage() {
   const [path, setPath] = useState([]);
   const [current, setCurrent] = useState(0);
   const [route, setRoute] = useState(null);
-
 
   // Review
   const [reviews, setReviews] = useState([]);
@@ -114,44 +112,45 @@ function PlaceDetailsPage() {
   const prevReview = () =>
     setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length);
 
-const redIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+  const redIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
 
-const blueIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+  const blueIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
 
+  //Geocoding
+  async function getCoordinatesFromAddress(address) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      address
+    )}`;
 
-  //Geocoding 
- async function getCoordinatesFromAddress(address) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-    address
-  )}`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (data.length > 0) {
-    return {
-      latitude: parseFloat(data[0].lat),
-      longitude: parseFloat(data[0].lon),
-    };
-  } else {
-    console.error("OSM Geocoding failed for:", address);
-    return null;
+    if (data.length > 0) {
+      return {
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon),
+      };
+    } else {
+      console.error("OSM Geocoding failed for:", address);
+      return null;
+    }
   }
-}
 
   useEffect(() => {
     async function fetchCoords() {
@@ -179,59 +178,58 @@ const blueIcon = new L.Icon({
   };
 
   // ================== Start Tracking ===================
- const startTracking = async () => {
-  if (!placeCoords) {
-    alert("Location coordinates not loaded yet!");
-    return;
-  }
+  const startTracking = async () => {
+    if (!placeCoords) {
+      alert("Location coordinates not loaded yet!");
+      return;
+    }
 
-  if (!("geolocation" in navigator)) {
-    alert("Geolocation is not supported in this browser.");
-    return;
-  }
+    if (!("geolocation" in navigator)) {
+      alert("Geolocation is not supported in this browser.");
+      return;
+    }
 
-  setTracking(true);
+    setTracking(true);
 
-  watchId.current = navigator.geolocation.watchPosition(
-    async (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      const newCoords = { latitude: lat, longitude: lng };
+    watchId.current = navigator.geolocation.watchPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const newCoords = { latitude: lat, longitude: lng };
 
-      setCoords(newCoords);
-      setPath((prev) => [...prev, [lat, lng]]);
+        setCoords(newCoords);
+        setPath((prev) => [...prev, [lat, lng]]);
 
-      const dist = calculateDistance(
-        lat,
-        lng,
-        placeCoords.latitude,
-        placeCoords.longitude
-      );
-      setDistance(dist);
-
-      if (!route) {
-        const r = await getRoute(
+        const dist = calculateDistance(
           lat,
           lng,
           placeCoords.latitude,
           placeCoords.longitude
         );
-        setRoute(r);
-      }
-    },
-    (err) => {
-      console.error(err);
-      alert("Failed to get your location. Please allow location access.");
-      setTracking(false);
-    },
-    {
-      enableHighAccuracy: false,
-      maximumAge: 30000,
-      timeout: 600000,
-    }
-  );
-};
+        setDistance(dist);
 
+        if (!route) {
+          const r = await getRoute(
+            lat,
+            lng,
+            placeCoords.latitude,
+            placeCoords.longitude
+          );
+          setRoute(r);
+        }
+      },
+      (err) => {
+        console.error(err);
+        alert("Failed to get your location. Please allow location access.");
+        setTracking(false);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 30000,
+        timeout: 600000,
+      }
+    );
+  };
 
   // ================== Stop Tracking ===================
   const stopTracking = () => {
@@ -316,30 +314,24 @@ const blueIcon = new L.Icon({
       createdAt: new Date().toISOString(),
     };
     try {
-      await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/places/${id}/reviews`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newReview),
-        }
-      );
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/places/${id}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReview),
+      });
     } catch (error) {
       console.error("Failed to add review:", error);
     }
   };
 
   async function getRoute(userLat, userLng, destLat, destLng) {
-  const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${destLng},${destLat}?overview=full&geometries=geojson`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if (!data.routes || data.routes.length === 0) return null;
+    const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${destLng},${destLat}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.routes || data.routes.length === 0) return null;
 
-  return data.routes[0].geometry.coordinates.map(
-    ([lng, lat]) => [lat, lng]
-  );
-}
-
+    return data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral">
@@ -427,7 +419,6 @@ const blueIcon = new L.Icon({
             >
               <ChevronRight />
             </button>
-
             <div className="flex justify-center mt-4 gap-2">
               {images.map((_, i) => (
                 <div
@@ -527,7 +518,6 @@ const blueIcon = new L.Icon({
           )}
         </div>
 
-
         {/* Directions Section*/}
         <h2 className="text-3xl font-bold mt-4">Live Navigation</h2>
         <p className="text-gray-400 mt-2">
@@ -543,7 +533,7 @@ const blueIcon = new L.Icon({
                   : [placeCoords.latitude, placeCoords.longitude]
               }
               zoom={13}
-              style={{ height: "550px", width: "100%" }}
+              className="h-96 w-full"
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -552,10 +542,7 @@ const blueIcon = new L.Icon({
 
               {/* Destination marker */}
               <Marker
-                position={[
-                  placeCoords.latitude,
-                  placeCoords.longitude,
-                ]}
+                position={[placeCoords.latitude, placeCoords.longitude]}
                 icon={redIcon}
               >
                 <Popup>{place.name} (Destination)</Popup>
@@ -564,65 +551,23 @@ const blueIcon = new L.Icon({
               {/* User live marker + path */}
               {coords && (
                 <>
-                  <Marker
-                    position={[
-                      coords.latitude,
-                      coords.longitude,
-                    ]}
-                  >
+                  <Marker position={[coords.latitude, coords.longitude]}>
                     <Popup>You are here</Popup>
                   </Marker>
-                  {path.length > 1 && (
-                    <Polyline positions={path} />
-                  )}
+                  {path.length > 1 && <Polyline positions={path} />}
                 </>
               )}
               {route && (
-  <Polyline
-    positions={route}
-    pathOptions={{ color: "blue", weight: 5 }}
-  />
-)}
-
+                <Polyline
+                  positions={route}
+                  pathOptions={{ color: "blue", weight: 5 }}
+                />
+              )}
             </MapContainer>
           ) : (
-            <div className="p-10 text-center text-gray-300">
-              Loading map...
-            </div>
+            <div className="p-10 text-center text-gray-300">Loading map...</div>
           )}
         </div>
-
-        {/* Nearby Services Section */}
-        <h2 className="text-2xl font-bold mt-10 mb-4">Nearby Services</h2>
-        <p className="text-gray-400 mb-8">
-          Find essential services and amenities near {place.name} to make your
-          visit comfortable and safe.
-        </p>
-        <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {services.map((s) => (
-            <motion.button
-              key={s.id}
-              className="group flex items-center gap-4 mt-2 text-black rounded-xl border border-gray-700 bg-gray-900/60 px-6 py-6 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-shadow hover:shadow-lg"
-              whileHover={{
-                y: -10,
-                scale: 1.02,
-                boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
-              }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              aria-label={s.label}
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-transparent border border-transparent group-hover:border-teal-400">
-                <s.Icon className="h-6 w-6 text-teal-300" />
-              </div>
-
-              <span className="text-left">
-                <div className="text-base font-semibold text-black">
-                  {s.label}
-                </div>
-              </span>
-            </motion.button>
-          ))}
-        </section>
 
         {/* Real-time Navigation Card (Distance + Buttons) */}
         <div className="bg-[#2E2E2E] text-black p-6 rounded-xl shadow-lg max-w-3xl mx-2 mt-10 border border-gray-700">
@@ -689,44 +634,73 @@ const blueIcon = new L.Icon({
             </div>
           )}
         </div>
+        {/* Nearby Services Section */}
+        <h2 className="text-2xl font-bold mt-10 mb-4">Nearby Services</h2>
+        <p className="text-gray-400 mb-8">
+          Find essential services and amenities near {place.name} to make your
+          visit comfortable and safe.
+        </p>
+        <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {services.map((s) => (
+            <motion.button
+              key={s.id}
+              className="group flex items-center gap-4 mt-2 text-black rounded-xl border border-gray-700 bg-gray-900/60 px-6 py-6 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-shadow hover:shadow-lg"
+              whileHover={{
+                y: -10,
+                scale: 1.02,
+                boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              aria-label={s.label}
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-transparent border border-transparent group-hover:border-teal-400">
+                <s.Icon className="h-6 w-6 text-teal-300" />
+              </div>
+
+              <span className="text-left">
+                <div className="text-base font-semibold text-black">
+                  {s.label}
+                </div>
+              </span>
+            </motion.button>
+          ))}
+        </section>
       </div>
-      
-        {/* Nearby Places Section */}
-        <h2 className="text-2xl font-bold mt-10 mb-4 ml-12">
-          Nearby Places to Explore
-        </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 ml-12">
-          {place.nearbyPlaces?.length > 0 ? (
-            place.nearbyPlaces.map((near) => (
-              <motion.div
-                key={near._id}
-                whileHover={{
-                  y: -10,
-                  scale: 1.02,
-                  boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
-                }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      {/* Nearby Places Section */}
+      <h2 className="text-2xl font-bold mt-10 mb-4 ml-12">
+        Nearby Places to Explore
+      </h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 ml-12">
+        {place.nearbyPlaces?.length > 0 ? (
+          place.nearbyPlaces.map((near) => (
+            <motion.div
+              key={near._id}
+              whileHover={{
+                y: -10,
+                scale: 1.02,
+                boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+            >
+              <Link
+                to={`/details/${near._id}`}
+                className="bg-white rounded-xl shadow-lg p-4 block overflow-hidden"
               >
-                <Link
-                  to={`/details/${near._id}`}
-                  className="bg-white rounded-xl shadow-lg p-4 block overflow-hidden"
-                >
-                  <img
-                    src={near.image}
-                    alt={near.name}
-                    className="h-20 md:h-40 lg:h-60 w-full object-cover rounded-lg"
-                  />
-                  <h3 className="font-bold text-lg mt-2">{near.name}</h3>
-                </Link>
-              </motion.div>
-            ))
-          ) : (
-            <p>No nearby places.</p>
-          )}
-        </div>
-
-   
+                <img
+                  src={near.image}
+                  alt={near.name}
+                  className="h-20 md:h-40 lg:h-60 w-full object-cover rounded-lg"
+                />
+                <h3 className="font-bold text-lg mt-2">{near.name}</h3>
+              </Link>
+            </motion.div>
+          ))
+        ) : (
+          <p>No nearby places.</p>
+        )}
+      </div>
 
       {/* AR/VR Preview Modal */}
       {showPreview && (

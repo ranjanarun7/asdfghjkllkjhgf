@@ -66,7 +66,7 @@ const FeedbackDashboard = () => {
       {/* CHART + FAILURES */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <div className="bg-white rounded-xl p-4">
+        <div className="bg-gray-50 rounded-xl p-4">
           <h3 className="font-semibold mb-3">Sentiment Overview</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
@@ -79,7 +79,7 @@ const FeedbackDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-xl p-4">
+        <div className="bg-gray-50 rounded-xl p-4">
           <h3 className="font-semibold mb-3">System Warnings</h3>
           {recentFailures.length === 0 ? (
             <p className="text-gray-500 italic">No failures detected</p>

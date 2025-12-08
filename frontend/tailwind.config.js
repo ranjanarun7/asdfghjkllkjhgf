@@ -17,6 +17,11 @@ module.exports = {
         sans: ['Inter', 'Poppins', 'sans-serif'],
         playfair: ['"Playfair Display"', 'serif'],
       },
+      height: {
+        '550': '550px',
+        '600': '600px',
+        '650': '650px',
+      },
     },
   },
   plugins: [],

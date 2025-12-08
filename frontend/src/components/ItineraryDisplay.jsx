@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-// Assuming ItineraryResponse, DayPlan, and ItineraryItem are defined/imported correctly in a type-less context
-// import { ItineraryResponse, DayPlan, ItineraryItem } from '../types';
 import { MapPin, IndianRupee, AlertTriangle, CheckCircle, Navigation, Car, Shield, ExternalLink, Calendar, MessageCircle, Send, Sparkles, Hotel, Train, Plane, Bus, Share2 } from 'lucide-react';
 import { askQuestionAboutItinerary } from '../services/geminiService';
 import { getTranslation } from '../translations';
@@ -67,7 +65,6 @@ import { getTranslation } from '../translations';
  * @type {React.FC<{ item: ItineraryItem }>}
  */
 const ItemCard = ({ item }) => {
-  // Fix the mapUrl generation string interpolation issue
   const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(item.place_name + " Jharkhand")}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
   const externalMapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(item.place_name + " Jharkhand")}`;
 

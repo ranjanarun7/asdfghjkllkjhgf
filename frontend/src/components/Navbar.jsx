@@ -1,40 +1,29 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useRef,useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User, ChevronDown, Search } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import { LanguageContext } from "../context/LanguageContext";
 import useTranslate from "../hooks/useTranslateNav";
+const fetchEsmeResults = async (query) => {
+  try {
+    const response = await fetch(
+  `http://localhost:5000/search?q=${encodeURIComponent(query)}`
+);
 
-// Hard-coded search data
-const searchList = [
-  {
-    id: "691e8914ed0bb3a992661e56",
-    name: "Netarhat Hills",
-    link: "/details/691e8914ed0bb3a992661e56",
-  },
-  {
-    id: "691e8914ed0bb3a992661e58",
-    name: "Betla National Park",
-    link: "/details/691e8914ed0bb3a992661e58",
-  },
-  {
-    id: "691e8914ed0bb3a992661e59",
-    name: "Hundru Falls",
-    link: "/details/691e8914ed0bb3a992661e59",
-  },
-  {
-    id: "691e8914ed0bb3a992661e57",
-    name: "Patratu Valley",
-    link: "/details/691e8914ed0bb3a992661e57",
-  },
-];
+    const data = await response.json();
+    return data.results || [];
+  } catch (err) {
+    console.error("Esme Search Error:", err);
+    return [];
+  }
+};
 
 function Navbar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-
+  const searchRef = useRef(null);
   const { lang, setLang } = useContext(LanguageContext);
 
   const { user: savedUser, logout } = useAuth();
@@ -57,20 +46,44 @@ function Navbar() {
   const tAdminPanel = useTranslate("Admin Panel", lang);
   const tSearch = useTranslate("Search...", lang);
 
-  const handleSearch = (value) => {
-    setQuery(value);
-
-    if (value.trim() === "") {
-      setResults([]);
-      return;
+let debounceTimer;
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (searchRef.current && !searchRef.current.contains(e.target)) {
+      setResults([]); // dropdown close
     }
-
-    const filtered = searchList.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setResults(filtered);
   };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+const handleSearch = async (value) => {
+  setQuery(value);
+
+  if (debounceTimer) clearTimeout(debounceTimer);
+
+  if (value.trim() === "") {
+    setResults([]);
+    return;
+  }
+
+  debounceTimer = setTimeout(async () => {
+    const esmeData = await fetchEsmeResults(value);
+
+    const formattedResults = esmeData.map((item) => ({
+      id: item.id || item._id || Math.random(),
+      name: item.title || item.name,
+      link: `/details/${item._id}`
+    }));
+
+    setResults(formattedResults);
+  }, 400);
+};
+
 
   return (
     <nav className="relative shadow-sm py-4 px-6 md:px-10 flex items-center justify-between z-50 text-xl">
@@ -84,7 +97,7 @@ function Navbar() {
 
       {/* Search + Language */}
       <div className="hidden md:flex items-center space-x-3 flex-1 justify-center">
-        <div className="relative w-96">
+        <div className="relative w-96" ref={searchRef}>
           <input
             type="text"
             value={query}

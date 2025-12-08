@@ -19,34 +19,157 @@ const CheckoutPage = () => {
     setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
-  const generateOrderId = () => {
-    return "ORD" + Math.floor(100000 + Math.random() * 900000);
+  // Load Razorpay script function
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
   };
 
+  // ⭐ FULL PAYMENT FLOW
   const handlePlaceOrder = async () => {
+    console.log("Place Order clicked");
 
-  if (!address.name || !address.phone || !address.street || !address.city || !address.pincode) {
-    alert("Fill all fields");
-    return;
-  }
-
-  const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/order/create-order`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cart, address }),
-  });
-
-  const data = await res.json();
-
-  navigate("/payment", {
-    state: {
-      orderId: data.orderId,
-      paymentId: data.paymentId,
-      address
+    // 0️⃣ validate address
+    if (
+      !address.name ||
+      !address.phone ||
+      !address.street ||
+      !address.city ||
+      !address.pincode
+    ) {
+      alert("Fill all fields");
+      return;
     }
-  });
-};
 
+    // 0.5️⃣ calculate total amount
+    const totalAmount = cart.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+      0
+    );
+    console.log("Cart total:", totalAmount, cart);
+
+    if (totalAmount <= 0) {
+      alert("Your cart is empty or amount is 0");
+      return;
+    }
+
+    // 1️⃣ Load Razorpay SDK
+    const scriptLoaded = await loadRazorpay();
+    if (!scriptLoaded) {
+      alert("Failed to load Razorpay. Please check your internet.");
+      return;
+    }
+
+    if (!window.Razorpay) {
+      alert("Razorpay SDK not available on window");
+      console.error("window.Razorpay is undefined");
+      return;
+    }
+
+    try {
+      // 2️⃣ Create order from backend
+      const orderRes = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: totalAmount }), // rupees
+        }
+      );
+
+      console.log("Create-order status:", orderRes.status);
+
+      if (!orderRes.ok) {
+        alert("Failed to create order. Check backend logs.");
+        return;
+      }
+
+      const data = await orderRes.json();
+      console.log("Create-order response:", data);
+
+      if (!data.success || !data.order) {
+        alert("Order creation error from backend");
+        return;
+      }
+
+      const options = {
+        key: data.key || process.env.REACT_APP_RAZORPAY_KEY_ID,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "Jharkhand Tourism - Order Payment",
+        description: "Order Checkout",
+        order_id: data.order.id,
+
+        // 3️⃣ Payment success handler
+        handler: async function (response) {
+          console.log("Razorpay payment response:", response);
+
+          const verifyRes = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/payment/verify`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(response),
+            }
+          );
+
+          const verifyData = await verifyRes.json();
+          console.log("Verify response:", verifyData);
+
+          if (verifyData.success) {
+            // 4️⃣ Save order to DB after successful payment (optional but good)
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/order/confirm`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  cart,
+                  address,
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id,
+                }),
+              }
+            );
+
+            // 5️⃣ Redirect to success page
+            navigate("/order-success", {
+              state: {
+                address,
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+              },
+            });
+          } else {
+            alert("Payment verification failed. Try again.");
+          }
+        },
+
+        prefill: {
+          name: address.name,
+          email: "customer@example.com",
+          contact: address.phone,
+        },
+
+        theme: {
+          color: "#16A34A",
+        },
+      };
+
+      console.log("Razorpay options:", options);
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (err) {
+      console.error("Place order error:", err);
+      alert("Something went wrong while placing the order.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
@@ -137,7 +260,7 @@ const CheckoutPage = () => {
           onClick={handlePlaceOrder}
           className="mt-8 w-full bg-green-600 text-white py-3 rounded-xl font-semibold text-lg shadow-md hover:bg-green-700 hover:shadow-lg transition-all duration-200 active:scale-95"
         >
-          Place Order
+          Place Order & Pay
         </button>
       </div>
     </div>

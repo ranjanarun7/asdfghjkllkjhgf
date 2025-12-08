@@ -109,7 +109,7 @@ function HeroSection() {
       />
 
       {/* MAIN CONTENT */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-end px-6 text-center bg-transparent bg-black bg-opacity-70">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center bg-transparent bg-black bg-opacity-70">
 
         {/* Heading */}
         <motion.h1
@@ -128,7 +128,7 @@ function HeroSection() {
           animate={{ opacity: bgReady ? 1 : 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <span className="bg-gradient-to-r from-green-500 via-yellow-300 to-accent bg-clip-text text-transparent">
+          <span className="bg-transparent text-green-500">
             {bgReady && <TypewriterText text={tSubtitle} />}
           </span>
         </motion.h2>
@@ -152,7 +152,7 @@ function HeroSection() {
         >
           <Link
             to="/itinerary"
-            className="flex items-center space-x-2 bg-primary hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+            className="flex items-center space-x-2 bg-green-700 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium"
           >
             <Calendar size={20} />
             <span>{bgReady && <TypewriterText text={tPlanTrip} />}</span>
@@ -161,7 +161,7 @@ function HeroSection() {
 
           <Link
             to="/marketplace"
-            className="flex items-center space-x-2 bg-accent hover:bg-accent-dark text-white px-6 py-3 rounded-lg font-medium"
+            className="flex items-center space-x-2 bg-transparent border border-gray-500 hover:bg-gray-300 hover:text-black text-white px-6 py-3 rounded-lg font-medium"
           >
             <Store size={20} />
             <span>{bgReady && <TypewriterText text={tExploreCulture} />}</span>
@@ -194,23 +194,6 @@ function HeroSection() {
             <p className="text-sm">{bgReady && <TypewriterText text={tStatRatings} />}</p>
           </div>
         </motion.div>
-      </div>
-
-      {/* Progress Bars */}
-      <div className="absolute bottom-6 w-full flex items-center justify-center gap-3 z-[999999] pointer-events-auto">
-        {videos.map((_, idx) => (
-          <div key={idx} className="relative w-20 h-[4px] bg-white/40 rounded-full">
-            <div
-              className="absolute left-0 top-0 h-full bg-red-500"
-              style={{
-                transform:
-                  idx === currentVideo ? `scaleX(${progress / 100})` : "scaleX(0)",
-                transformOrigin: "left",
-                transition: "transform 0.1s linear",
-              }}
-            ></div>
-          </div>
-        ))}
       </div>
     </div>
   );
