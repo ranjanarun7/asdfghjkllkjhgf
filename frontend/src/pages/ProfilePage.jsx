@@ -22,7 +22,7 @@ const ProfilePage = () => {
   const [language, setLanguage] = useState("");
   const [document, setDocument] = useState(null);
   const [guideInfo, setGuideInfo] = useState(null);
-  const { user, setUser, loading } = useAuth();
+  const { user, login, loading } = useAuth();
 
   // Local state for form data
   const [formData, setFormData] = useState({
@@ -57,6 +57,14 @@ const ProfilePage = () => {
     }
   }, [isEditing, user]);
 
+  const validateImageUrl = (url) => {
+    if (url && url.includes("unsplash.com/photos/")) {
+      alert("It looks like you pasted a link to a website, not an image.\n\nPlease right-click the image and select 'Copy Image Address' (or 'Copy Image Link').\n\nA correct Unsplash link usually looks like: https://images.unsplash.com/photo-...");
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     if (!user?._id) return;
 
@@ -71,6 +79,10 @@ const ProfilePage = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if (!validateImageUrl(formData.avatar) || !validateImageUrl(formData.coverPhoto)) {
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -91,7 +103,10 @@ const ProfilePage = () => {
         alert(data.message || "Update failed");
         return;
       }
-      setUser(data.user);
+
+      if (data.user) {
+        login(data.user);
+      }
       setIsEditing(false);
     } catch (err) {
       console.error(err);
