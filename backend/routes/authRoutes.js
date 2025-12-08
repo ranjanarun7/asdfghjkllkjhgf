@@ -77,7 +77,7 @@ router.put("/:id", async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       { name, email, phone, location, bio, avatar, coverPhoto },
-      { new: true } // naya updated doc return hoga
+      { new: true }
     );
 
     if (!updatedUser) {
