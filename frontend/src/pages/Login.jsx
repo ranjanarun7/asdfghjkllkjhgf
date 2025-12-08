@@ -25,46 +25,81 @@ const Login = () => {
     alert(data.message);
 
     if (data.success) {
-  localStorage.setItem("token", data.token); 
-  localStorage.setItem("userId", data.user._id);
-  login(data.user);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user._id);
+      login(data.user);
 
-  // ✅ Admin check
-  if (data.user.isAdmin) {
-    navigate("/admin");
-  } else {
-    navigate(redirectTo);
-  }
-}
+      // ✅ Admin check
+      if (data.user.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate(redirectTo);
+      }
+    }
 
 
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral">
-    <Navbar />
-    <div className="flex flex-col items-center justify-center mt-10">
-      <h1 className="font-bold text-green-600 mb-6">Smart Tourism Jharkhand</h1>
-      <form className="w-96 bg-white p-6 shadow rounded" onSubmit={handleSubmit}>
-        <h2 className="text-xl font-bold mb-4 text-center">Login In to Your Account</h2>
-        <p className="text-center text-gray-400 mb-4">Welcome back! Please enter your details.</p>
-        <input
-          className="border p-2 w-full mb-3 rounded"
-          placeholder="Email"
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 font-inter">
+      <Navbar />
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-6">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-playfair font-bold text-green-900 mb-2">
+            Smart Tourism Jharkhand
+          </h1>
+          <p className="text-green-700">Experience the beauty of nature</p>
+        </div>
 
-        <input
-          className="border p-2 w-full mb-3 rounded"
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
-        
-        <button className="btn-primary w-full mt-4">Login</button>
-        <p className="mt-2">Create an account? <a href="/signup" className="text-blue-600">Signup</a></p>
-      </form>
-    </div>
+        <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl shadow-green-900/5 border border-white">
+          <h2 className="text-2xl font-playfair font-bold mb-2 text-center text-gray-800">
+            Welcome Back
+          </h2>
+          <p className="text-center text-gray-500 mb-8 text-sm">
+            Please enter your details to sign in
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                Email Address
+              </label>
+              <input
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                placeholder="Enter your email"
+                type="email"
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                Password
+              </label>
+              <input
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                type="password"
+                placeholder="••••••••"
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+            </div>
+
+            <button className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all active:scale-95">
+              Sign In
+            </button>
+
+            <p className="text-center text-sm text-gray-500 mt-6">
+              Don't have an account?{" "}
+              <a
+                href="/signup"
+                className="text-green-600 font-bold hover:text-green-700 underline decoration-2 underline-offset-4"
+              >
+                Sign up
+              </a>
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

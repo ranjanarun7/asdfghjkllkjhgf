@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -107,18 +108,13 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-earth-100 py-12 px-6">
-      <a href="/">
-        <button className="btn flex items-center gap-2">
-          <ArrowLeft size={18} />
-          <span>Back</span>
-        </button>
-      </a>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 font-inter">
+      <Navbar />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto py-12 px-6">
         {/* Page Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-green-900 mb-2">
+        <div className="mb-10 text-center md:text-left">
+          <h1 className="text-4xl md:text-5xl font-playfair font-bold text-green-900 mb-2">
             My Profile
           </h1>
           <p className="text-gray-600">
@@ -147,52 +143,54 @@ const ProfilePage = () => {
 
                 <div className="absolute -bottom-16 left-8">
                   <div className="relative">
-  <img
-    src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"}
-    alt={user.name}
-    className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
-  />
+                    <img
+                      src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"}
+                      alt={user.name}
+                      className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                    />
 
-  {user.isAdmin && (
-    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xs px-3 py-1 rounded-full mb-2">
-      Admin
-    </div>
-  )}
+                    {user.isAdmin && (
+                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xs px-3 py-1 rounded-full mb-2 shadow-md">
+                        Admin
+                      </div>
+                    )}
 
-  <button className="absolute bottom-2 right-2 bg-green-600 text-black p-2 rounded-full shadow-md hover:bg-green-500">
-    <Camera size={16} />
-  </button>
-</div>
-
+                    <button className="absolute bottom-2 right-2 bg-green-600 text-black p-2 rounded-full shadow-md hover:bg-green-500 transition-colors">
+                      <Camera size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Profile Content */}
               <div className="pt-20 px-8 pb-8">
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-2xl font-serif font-bold text-green-900">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-3xl font-playfair font-bold text-green-900">
                         {user.name}
                       </h2>
 
                       {guideInfo?.status === "approved" && (
-                        <span className="text-sm bg-green-600 text-white px-2 py-1 rounded-full flex items-center gap-1">
-                          ✅ Verified Guide
+                        <span className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-1 border border-green-200">
+                          <ShieldCheck size={14} /> Verified Guide
                         </span>
                       )}
                     </div>
 
-                    <p className="text-gray-500 flex items-center gap-2 text-sm mt-1">
-                      <MapPin size={14} /> {user.location}
+                    <p className="text-gray-500 flex items-center gap-2 text-sm mt-2">
+                      <MapPin size={16} className="text-green-600" /> {user.location || "Location not set"}
                     </p>
                   </div>
 
                   <button
                     onClick={() => setIsEditing(!isEditing)}
-                    className="px-6 py-2 rounded-full text-sm font-bold border border-gray-200 hover:border-green-600 hover:text-green-600"
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${isEditing
+                      ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                      : "bg-green-50 text-green-800 border border-green-200 hover:bg-green-100"
+                      }`}
                   >
-                    {isEditing ? "Cancel" : "Edit Profile"}
+                    {isEditing ? "Cancel Editing" : "Edit Profile"}
                   </button>
                 </div>
 
@@ -202,127 +200,130 @@ const ProfilePage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* NAME */}
                       <div>
-                        <label className="label-xs">Full Name</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Full Name</label>
                         <input
                           type="text"
                           value={user.name}
                           onChange={(e) =>
                             setUser({ ...user, name: e.target.value })
                           }
-                          className="input-field"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                         />
                       </div>
 
                       {/* LOCATION */}
                       <div>
-                        <label className="label-xs">Location</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Location</label>
                         <input
                           type="text"
                           value={user.location}
                           onChange={(e) =>
                             setUser({ ...user, location: e.target.value })
                           }
-                          className="input-field"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                         />
                       </div>
 
                       {/* EMAIL */}
                       <div>
-                        <label className="label-xs">Email Address</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Email Address</label>
                         <div className="relative">
-                          <Mail className="input-icon" size={18} />
+                          <Mail className="absolute left-4 top-3.5 text-gray-400" size={18} />
                           <input
                             type="email"
                             value={user.email}
                             onChange={(e) =>
                               setUser({ ...user, email: e.target.value })
                             }
-                            className="input-field pl-12"
+                            className="w-full p-3 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           />
                         </div>
                       </div>
 
                       {/* PHONE */}
                       <div>
-                        <label className="label-xs">Phone Number</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Phone Number</label>
                         <div className="relative">
-                          <Phone className="input-icon" size={18} />
+                          <Phone className="absolute left-4 top-3.5 text-gray-400" size={18} />
                           <input
                             type="tel"
                             value={user.phone}
                             onChange={(e) =>
                               setUser({ ...user, phone: e.target.value })
                             }
-                            className="input-field pl-12"
+                            className="w-full p-3 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                           />
                         </div>
                       </div>
-                      {/* AVATAR URL */}
-<div>
-  <label className="label-xs">Profile Photo URL</label>
-  <input
-    type="text"
-    value={user.avatar || ""}
-    onChange={(e) =>
-      setUser({ ...user, avatar: e.target.value })
-    }
-    className="input-field"
-    placeholder="Paste avatar image link"
-  />
-</div>
 
-{/* COVER PHOTO URL */}
-<div>
-  <label className="label-xs">Cover Photo URL</label>
-  <input
-    type="text"
-    value={user.coverPhoto || ""}
-    onChange={(e) =>
-      setUser({ ...user, coverPhoto: e.target.value })
-    }
-    className="input-field"
-    placeholder="Paste cover image link"
-  />
-</div>
+                      {/* AVATAR URL */}
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Profile Photo URL</label>
+                        <input
+                          type="text"
+                          value={user.avatar || ""}
+                          onChange={(e) =>
+                            setUser({ ...user, avatar: e.target.value })
+                          }
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                          placeholder="Paste avatar image link"
+                        />
+                      </div>
+
+                      {/* COVER PHOTO URL */}
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Cover Photo URL</label>
+                        <input
+                          type="text"
+                          value={user.coverPhoto || ""}
+                          onChange={(e) =>
+                            setUser({ ...user, coverPhoto: e.target.value })
+                          }
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                          placeholder="Paste cover image link"
+                        />
+                      </div>
 
                       {/* BIO */}
                       <div className="md:col-span-2">
-                        <label className="label-xs">Bio</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Bio</label>
                         <textarea
-                          rows={3}
+                          rows={4}
                           value={user.bio}
                           onChange={(e) =>
                             setUser({ ...user, bio: e.target.value })
                           }
-                          className="input-field resize-none"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all resize-none"
                         />
                       </div>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="bg-green-900 text-black px-8 py-3 rounded-xl font-bold hover:bg-green-800"
-                    >
-                      Save Changes
-                    </button>
+                    <div className="flex justify-end pt-4">
+                      <button
+                        type="submit"
+                        className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all active:scale-95"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
                   </form>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                    <div>
-                      <h4 className="label-xs">Email</h4>
-                      <p className="text-gray-800 font-medium">{user.email}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email</h4>
+                      <p className="text-gray-800 font-medium break-all">{user.email}</p>
                     </div>
 
-                    <div>
-                      <h4 className="label-xs">Phone</h4>
-                      <p className="text-gray-800 font-medium">{user.phone}</p>
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Phone</h4>
+                      <p className="text-gray-800 font-medium">{user.phone || "Not provided"}</p>
                     </div>
 
                     <div className="md:col-span-2">
-                      <h4 className="label-xs">About Me</h4>
-                      <p className="text-gray-600 leading-relaxed">
-                        {user.bio}
-                      </p>
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">About Me</h4>
+                      <div className="text-gray-600 leading-relaxed bg-gray-50 p-6 rounded-xl border border-gray-100">
+                        {user.bio || "No bio added yet. Click edit to add something about yourself!"}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -336,69 +337,62 @@ const ProfilePage = () => {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-green-800 rounded-3xl p-8 text-black relative overflow-hidden"
+                className="bg-gradient-to-br from-green-800 to-green-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-green-700 rounded-full blur-3xl -mr-16 -mt-16 opacity-50"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-green-600 rounded-full blur-3xl -mr-16 -mt-16 opacity-30"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-600 rounded-full blur-3xl -ml-10 -mb-10 opacity-30"></div>
 
                 <div className="relative z-10">
-                  <div className="w-16 h-16 bg-green-700 rounded-2xl flex items-center justify-center mb-6">
-                    <Award className="text-green-500 w-8 h-8" />
+                  <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                    <Award className="text-green-300 w-8 h-8" />
                   </div>
 
-                  <h3 className="text-2xl font-serif font-bold mb-3">
+                  <h3 className="text-2xl font-playfair font-bold mb-3">
                     Become a Guide
                   </h3>
-                  <p className="text-green-600 text-sm mb-8">
-                    Join Jharkhand Tourism’s verified guide network.
+                  <p className="text-green-200 text-sm mb-8 leading-relaxed">
+                    Join Jharkhand Tourism’s verified guide network and earn by showcasing the beauty of our state.
                   </p>
 
                   {/* STATUS — submitted */}
-                  {guideInfo?.status === "approved" ? (
-                    <div className="bg-green-700 rounded-xl p-6 text-center">
+                  {guideInfo?.status === "pending" ? (
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
+                      <div className="text-3xl mb-3">⏳</div>
                       <h4 className="font-bold text-lg text-white">
-                        ✅ Verified Tourism Guide
+                        Application Review
                       </h4>
                       <p className="text-sm text-green-200 mt-2">
-                        You are officially approved by Jharkhand Tourism
-                        Department.
-                      </p>
-                    </div>
-                  ) : guideInfo?.status === "pending" ? (
-                    <div className="bg-yellow-600 rounded-xl p-6 text-center">
-                      <h4 className="font-bold text-lg text-black">
-                        ⏳ Application Under Review
-                      </h4>
-                      <p className="text-sm text-yellow-100 mt-2">
-                        Your guide application is being verified.
+                        Our team is verifying your documents. This usually takes 24-48 hours.
                       </p>
                     </div>
                   ) : (
                     <form onSubmit={handleGuideSubmit} className="space-y-4">
                       <div>
-                        <label className="label-xs text-green-200">
+                        <label className="text-xs font-bold text-green-300 uppercase tracking-wider mb-2 block">
                           Region Expertise
                         </label>
                         <select
-                          className="w-full p-3 rounded-xl bg-green-800 border border-green-700 text-white"
+                          className="w-full p-3 rounded-xl bg-white/10 border border-green-600/30 text-white focus:outline-none focus:bg-green-800 focus:border-green-400 transition-colors"
                           value={region}
                           onChange={(e) => setRegion(e.target.value)}
                           required
                         >
-                          <option>Ranchi & Surroundings</option>
-                          <option>Netarhat & Latehar</option>
-                          <option>Deoghar & Santhal Pargana</option>
-                          <option>Jamshedpur & Dalma</option>
+                          <option className="text-black" value="">Select Region</option>
+                          <option className="text-black">Ranchi & Surroundings</option>
+                          <option className="text-black">Netarhat & Latehar</option>
+                          <option className="text-black">Deoghar & Santhal Pargana</option>
+                          <option className="text-black">Jamshedpur & Dalma</option>
                         </select>
                       </div>
 
                       <div>
-                        <label className="label-xs text-green-200">
+                        <label className="text-xs font-bold text-green-300 uppercase tracking-wider mb-2 block">
                           Languages
                         </label>
                         <input
                           type="text"
                           placeholder="e.g. Hindi, English, Santhali"
-                          className="w-full p-3 rounded-xl bg-green-700 border border-green-700 text-white placeholder-white"
+                          className="w-full p-3 rounded-xl bg-white/10 border border-green-600/30 text-white placeholder-green-300/50 focus:outline-none focus:bg-green-800 focus:border-green-400 transition-colors"
                           value={language}
                           onChange={(e) => setLanguage(e.target.value)}
                           required
@@ -406,22 +400,24 @@ const ProfilePage = () => {
                       </div>
 
                       <div>
-                        <label className="label-xs text-green-200">
+                        <label className="text-xs font-bold text-green-300 uppercase tracking-wider mb-2 block">
                           Govt ID (Aadhaar/PAN)
                         </label>
-                        <input
-                          type="file"
-                          required
-                          onChange={(e) => setDocument(e.target.files[0])}
-                        />
+                        <div className="relative">
+                          <input
+                            type="file"
+                            required
+                            className="w-full text-sm text-green-200 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                            onChange={(e) => setDocument(e.target.files[0])}
+                          />
+                        </div>
                       </div>
 
                       <button
                         type="submit"
-                        disabled={false}
-                        className="w-full mt-4 bg-white text-green-800 py-3 rounded-xl font-bold hover:bg-green-100 flex items-center justify-center gap-2"
+                        className="w-full mt-4 bg-white text-green-900 py-3.5 rounded-xl font-bold hover:bg-green-50 transition-colors flex items-center justify-center gap-2 shadow-lg"
                       >
-                        Apply Now <ShieldCheck size={16} />
+                        Apply Now <ShieldCheck size={18} />
                       </button>
                     </form>
                   )}
@@ -434,5 +430,4 @@ const ProfilePage = () => {
     </div>
   );
 };
-
 export default ProfilePage;

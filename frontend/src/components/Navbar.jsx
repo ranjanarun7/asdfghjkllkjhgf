@@ -1,4 +1,4 @@
-import React, { useState, useContext,useRef,useEffect } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User, ChevronDown, Search } from "lucide-react";
 import logo from "../assets/logo.png";
@@ -8,8 +8,8 @@ import useTranslate from "../hooks/useTranslateNav";
 const fetchEsmeResults = async (query) => {
   try {
     const response = await fetch(
-  `http://localhost:5000/search?q=${encodeURIComponent(query)}`
-);
+      `http://localhost:5000/search?q=${encodeURIComponent(query)}`
+    );
 
     const data = await response.json();
     return data.results || [];
@@ -35,10 +35,9 @@ function Navbar() {
   const handleLogout = logout;
 
   const linkClasses = (path) =>
-    `flex items-center ${
-      location.pathname === path
-        ? "text-green-600 font-semibold"
-        : "hover:text-green-600"
+    `flex items-center ${location.pathname === path
+      ? "text-green-600 font-semibold"
+      : "hover:text-green-600"
     }`;
   const tCulture = useTranslate("Culture", lang);
   const tLogin = useTranslate("Login", lang);
@@ -46,43 +45,43 @@ function Navbar() {
   const tAdminPanel = useTranslate("Admin Panel", lang);
   const tSearch = useTranslate("Search...", lang);
 
-let debounceTimer;
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (searchRef.current && !searchRef.current.contains(e.target)) {
-      setResults([]); // dropdown close
+  let debounceTimer;
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setResults([]); // dropdown close
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+  const handleSearch = async (value) => {
+    setQuery(value);
+
+    if (debounceTimer) clearTimeout(debounceTimer);
+
+    if (value.trim() === "") {
+      setResults([]);
+      return;
     }
+
+    debounceTimer = setTimeout(async () => {
+      const esmeData = await fetchEsmeResults(value);
+
+      const formattedResults = esmeData.map((item) => ({
+        id: item.id || item._id || Math.random(),
+        name: item.title || item.name,
+        link: `/details/${item._id}`
+      }));
+
+      setResults(formattedResults);
+    }, 400);
   };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
-
-
-const handleSearch = async (value) => {
-  setQuery(value);
-
-  if (debounceTimer) clearTimeout(debounceTimer);
-
-  if (value.trim() === "") {
-    setResults([]);
-    return;
-  }
-
-  debounceTimer = setTimeout(async () => {
-    const esmeData = await fetchEsmeResults(value);
-
-    const formattedResults = esmeData.map((item) => ({
-      id: item.id || item._id || Math.random(),
-      name: item.title || item.name,
-      link: `/details/${item._id}`
-    }));
-
-    setResults(formattedResults);
-  }, 400);
-};
 
 
   return (
@@ -136,15 +135,14 @@ const handleSearch = async (value) => {
             {lang === "en"
               ? "English"
               : lang === "hi"
-              ? "Hindi"
-              : lang === "bn"
-              ? "Bengali"
-              : "Marathi"}
+                ? "Hindi"
+                : lang === "bn"
+                  ? "Bengali"
+                  : "Marathi"}
             <ChevronDown
               size={18}
-              className={`transition-transform duration-200 ${
-                langOpen ? "rotate-180" : ""
-              } hover:text-green-600`}
+              className={`transition-transform duration-200 ${langOpen ? "rotate-180" : ""
+                } hover:text-green-600`}
             />
           </button>
 
@@ -162,10 +160,10 @@ const handleSearch = async (value) => {
                   {code === "en"
                     ? "English"
                     : code === "hi"
-                    ? "Hindi"
-                    : code === "bn"
-                    ? "Bengali"
-                    : "Marathi"}
+                      ? "Hindi"
+                      : code === "bn"
+                        ? "Bengali"
+                        : "Marathi"}
                 </div>
               ))}
             </div>
@@ -176,9 +174,11 @@ const handleSearch = async (value) => {
       {/* Desktop Menu */}
       <div className="hidden md:flex space-x-8">
         {!savedUser ? (
-          <Link to="/login" className={linkClasses("/login") + "font-bold"}>
-            {tLogin}
-          </Link>
+          location.pathname !== "/login" && (
+            <Link to="/login" className={linkClasses("/login") + "font-bold"}>
+              {tLogin}
+            </Link>
+          )
         ) : (
           <div className="relative flex items-center cursor-pointer">
             <button
@@ -309,9 +309,8 @@ const handleSearch = async (value) => {
               {lang === "en" ? "English" : lang === "hi" ? "Hindi" : lang}
               <ChevronDown
                 size={18}
-                className={`transition-transform duration-200 ${
-                  langOpen ? "rotate-180" : ""
-                }`}
+                className={`transition-transform duration-200 ${langOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
             {langOpen && (
@@ -328,10 +327,10 @@ const handleSearch = async (value) => {
                     {code === "en"
                       ? "English"
                       : code === "hi"
-                      ? "Hindi"
-                      : code === "bn"
-                      ? "Bengali"
-                      : "Marathi"}
+                        ? "Hindi"
+                        : code === "bn"
+                          ? "Bengali"
+                          : "Marathi"}
                   </div>
                 ))}
               </div>
@@ -375,13 +374,15 @@ const handleSearch = async (value) => {
             </Link>
           )}
           {!savedUser ? (
-            <Link
-              to="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className={linkClasses("/login") + "font-bold"}
-            >
-              {tLogin}
-            </Link>
+            location.pathname !== "/login" && (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className={linkClasses("/login") + "font-bold"}
+              >
+                {tLogin}
+              </Link>
+            )
           ) : (
             <button
               onClick={handleLogout}
