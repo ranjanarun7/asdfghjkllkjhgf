@@ -1,48 +1,12 @@
 const express = require("express");
 const { GoogleGenAI, Type } = require("@google/genai");
 const Feedback = require("../models/feedback");
-
+const analysisSchema = require("../models/analyze");
 const router = express.Router();
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
-
-/* ---------------- GEMINI RESPONSE SCHEMA ---------------- */
-
-const analysisSchema = {
-  type: Type.OBJECT,
-  properties: {
-    detectedLanguage: { type: Type.STRING },
-    sentimentLabel: { type: Type.STRING, enum: ["POSITIVE", "NEGATIVE", "NEUTRAL", "MIXED"] },
-    sentimentScore: { type: Type.NUMBER },
-    ratingInferred: { type: Type.NUMBER },
-    categories: { type: Type.ARRAY, items: { type: Type.STRING } },
-    safetyFlags: {
-      type: Type.OBJECT,
-      properties: {
-        isSafetyIssue: { type: Type.BOOLEAN },
-        isUrgent: { type: Type.BOOLEAN },
-        notes: { type: Type.ARRAY, items: { type: Type.STRING } }
-      },
-      required: ["isSafetyIssue", "isUrgent", "notes"]
-    },
-    improvementSuggestionsSystem: { type: Type.ARRAY, items: { type: Type.STRING } },
-    improvementSuggestionsVendor: { type: Type.ARRAY, items: { type: Type.STRING } },
-    summaryForDashboard: { type: Type.STRING },
-    shouldRaiseAlert: { type: Type.BOOLEAN },
-    alertReason: { type: Type.STRING }
-  },
-  required: [
-    "detectedLanguage",
-    "sentimentLabel",
-    "sentimentScore",
-    "categories",
-    "safetyFlags",
-    "summaryForDashboard",
-    "shouldRaiseAlert"
-  ]
-};
 
 /* ---------------- API ROUTE ---------------- */
 
