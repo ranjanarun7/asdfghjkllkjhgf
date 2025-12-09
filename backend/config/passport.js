@@ -20,6 +20,8 @@ passport.deserializeUser(async (id, done) => {
 
 // Helper function to handle social login
 const socialLoginCallback = async (accessToken, refreshToken, profile, done) => {
+    console.log("-> socialLoginCallback triggered for provider:", profile.provider);
+    console.log("-> profile.id:", profile.id);
     try {
         // Check if user exists by social ID
         let user = await User.findOne({
@@ -31,16 +33,19 @@ const socialLoginCallback = async (accessToken, refreshToken, profile, done) => 
         });
 
         if (user) {
+            console.log("-> User found by social ID:", user._id);
             return done(null, user);
         }
 
         // Check if user exists by email (to merge accounts)
         // Note: Twitter might not provide email depending on permissions/settings
         const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+        console.log("-> Email from profile:", email);
 
         if (email) {
             user = await User.findOne({ email });
             if (user) {
+                console.log("-> User found by email, merging social ID");
                 // Link social ID to existing account
                 if (profile.provider === 'google') user.googleId = profile.id;
                 if (profile.provider === 'facebook') user.facebookId = profile.id;
@@ -50,6 +55,7 @@ const socialLoginCallback = async (accessToken, refreshToken, profile, done) => 
             }
         }
 
+        console.log("-> Creating new user...");
         // Create new user
         const newUser = new User({
             name: profile.displayName,
@@ -59,12 +65,15 @@ const socialLoginCallback = async (accessToken, refreshToken, profile, done) => 
             googleId: profile.provider === 'google' ? profile.id : undefined,
             facebookId: profile.provider === 'facebook' ? profile.id : undefined,
             twitterId: profile.provider === 'twitter' ? profile.id : undefined,
+            isAdmin: false // Explicitly set isAdmin false for safety
         });
 
         await newUser.save();
+        console.log("-> New user created:", newUser._id);
         done(null, newUser);
 
     } catch (err) {
+        console.error("-> Error in socialLoginCallback:", err);
         done(err, null);
     }
 };

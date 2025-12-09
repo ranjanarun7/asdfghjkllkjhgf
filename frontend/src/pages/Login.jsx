@@ -49,6 +49,9 @@ const Login = () => {
     const isAdmin = query.get("isAdmin");
 
     if (token && userId) {
+      console.log("-> Social login detected. Token:", token);
+      console.log("-> UserId:", userId);
+
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
 
@@ -58,15 +61,35 @@ const Login = () => {
         isAdmin: isAdmin === 'true'
       };
 
+      console.log("-> Logging in user:", user);
       login(user); // Update auth context
 
-      if (user.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate(redirectTo);
-      }
+      // Show processing...
+      // We can use a short timeout to allow the state to settle before navigating
+      setTimeout(() => {
+        console.log("-> Navigating to home...");
+        if (user.isAdmin) {
+          navigate("/admin", { replace: true });
+        } else {
+          // Force home page for social login to avoid circular redirects or invalid state
+          navigate("/", { replace: true });
+        }
+      }, 500);
     }
-  }, [location, login, navigate, redirectTo]);
+  }, [location, login, navigate]); // Removed redirectTo from dependencies to avoid loop
+
+  // Loading indicator for social login
+  const query = new URLSearchParams(location.search);
+  if (query.get("token")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-green-900 mb-2">Logging you in...</h2>
+          <p className="text-green-700">Please wait a moment.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 font-inter">

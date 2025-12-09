@@ -19,7 +19,7 @@ router.get('/google/callback',
   (req, res) => {
     // Successful authentication
     const token = generateToken(req.user);
-    res.redirect(`http://localhost:3000/?token=${token}&userId=${req.user._id}&isAdmin=${req.user.isAdmin}`);
+    res.redirect(`http://localhost:3000/login?token=${token}&userId=${req.user._id}&isAdmin=${req.user.isAdmin}`);
   }
 );
 
@@ -110,6 +110,8 @@ router.post("/login", async (req, res) => {
     }
   });
 });
+
+
 
 // ✅ Update profile
 router.put("/:id", async (req, res) => {

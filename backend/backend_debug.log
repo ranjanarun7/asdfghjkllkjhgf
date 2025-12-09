@@ -1,0 +1,21 @@
+[dotenv@17.2.3] injecting env (7) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+--- Google Auth Debug ---
+Client ID: 582881108650-8h...
+Client Secret: Loaded (Starts with GOCSP)
+Callback URL: http://localhost:5000/auth/google/callback
+-------------------------
+Server is running on port 5000
+Connected to MongoDB
+-> /auth/google called
+-> /auth/google/callback called
+Query: [Object: null prototype] {
+  code: '4/0ATX87lMgpoYPw7iCdRFN9Mia_8xu9CiCs6fPWMCYGMfL6-48prdVvYnYoHXlKD4F83YQTA',
+  scope: 'email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+  authuser: '1',
+  prompt: 'none'
+}
+-> socialLoginCallback triggered for provider: google
+-> profile.id: 105205146539843044095
+-> User found by social ID: new ObjectId('6937ac38b700f3eb9476ce44')
+-> Passport auth successful, user: new ObjectId('6937ac38b700f3eb9476ce44')
