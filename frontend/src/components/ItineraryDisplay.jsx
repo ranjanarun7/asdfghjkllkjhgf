@@ -64,8 +64,41 @@ import { getTranslation } from '../translations';
 /**
  * @type {React.FC<{ item: ItineraryItem }>}
  */
+const MapModal = ({ isOpen, onClose, mapUrl, placeName }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h3 className="font-bold text-gray-800 text-lg">Map — {placeName}</h3>
+          <button
+            onClick={onClose}
+            className="px-3 py-1 rounded bg-red-500 text-white"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className="w-full h-96">
+          <iframe
+            title={placeName}
+            src={mapUrl}
+            width="100%"
+            height="100%"
+            className="border-0"
+            allowFullScreen=""
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ItemCard = ({ item }) => {
-  const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(item.place_name + " Jharkhand")}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+  const [mapOpen, setMapOpen] = useState(false);
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(item.place_name + " Jharkhand")}&output=embed`;
   const externalMapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(item.place_name + " Jharkhand")}`;
 
   return (
@@ -140,19 +173,27 @@ const ItemCard = ({ item }) => {
                 className="filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
               ></iframe>
               <div className="absolute bottom-2 right-2">
-                 <a 
-                   href={externalMapUrl} 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   className="bg-white text-xs font-bold px-2 py-1 rounded shadow flex items-center gap-1 text-blue-600 hover:bg-blue-50"
-                 >
-                   Open <ExternalLink size={10} />
-                 </a>
+                 <button 
+  onClick={() => setMapOpen(true)}
+  className="bg-white text-xs font-bold px-2 py-1 rounded shadow flex items-center gap-1 text-blue-600 hover:bg-blue-50"
+>
+  Open <ExternalLink size={10} />
+</button>
+
               </div>
            </div>
         </div>
       </div>
+      <MapModal
+  isOpen={mapOpen}
+  onClose={() => setMapOpen(false)}
+  mapUrl={mapUrl}
+  placeName={item.place_name}
+/>
+
+
     </div>
+    
   );
 };
 

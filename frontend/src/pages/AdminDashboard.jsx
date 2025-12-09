@@ -221,7 +221,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex font-sans text-slate-800">
+    <div className="h-screen overflow-hidden bg-gray-50 flex font-sans text-gray-800">
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
       <main className="flex-1 md:ml-11 p-4 md:p-8 pt-16 md:pt-8 overflow-y-auto h-screen">

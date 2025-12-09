@@ -11,11 +11,9 @@ async function seedCultures() {
 
     console.log("🌱 Connected to MongoDB for seeding cultures");
 
-    // 1. Remove old data (optional)
     await Culture.deleteMany({});
     console.log("🧹 Old cultures cleared");
 
-    // 2. New cultures insert
     const cultures = await Culture.insertMany([
       {
         id: 1,
@@ -80,8 +78,6 @@ async function seedCultures() {
     ]);
 
     console.log("✅ Cultures inserted successfully");
-
-    // 3. Finish
     await mongoose.disconnect();
     console.log("🔌 MongoDB disconnected");
     process.exit(0);

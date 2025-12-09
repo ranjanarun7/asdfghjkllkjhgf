@@ -7,7 +7,6 @@ router.get("/", async (req, res) => {
   res.json(data);
 });
 
-// PUT THIS FIRST
 router.get("/category/:category", async (req, res) => {
   const category = req.params.category;
   const items = await Culture.find({ category });
@@ -18,7 +17,6 @@ router.get("/category/:category", async (req, res) => {
   res.json(items);
 });
 
-// PUT THIS LAST
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const item = await Culture.findOne({ id });

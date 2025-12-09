@@ -2,7 +2,6 @@ const express = require("express");
 const User = require("../models/userModel");
 const router = express.Router();
 
-// ✅ Update profile
 router.put("/:id", async (req, res) => {
   try {
     const { name, email, phone, location, bio, avatar, coverPhoto } = req.body;
@@ -38,7 +37,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ GET USER FOR REFRESH
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");

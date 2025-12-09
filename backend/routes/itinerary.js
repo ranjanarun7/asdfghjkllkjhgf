@@ -76,8 +76,6 @@ router.get("/history/:userId", async (req, res) => {
 
 router.delete("/delete/:id", async (req, res) => {
   try {
-    console.log("DELETE API HIT:", req.params.id);   // ✅ DEBUG LOG
-
     const deleted = await Itinerary.findByIdAndDelete(req.params.id);
 
     if (!deleted) {

@@ -15,9 +15,6 @@ router.get("/", async (req, res) => {
   res.json(products);
 });
 
-
-
-// Add product (optional)
 router.post("/", async (req, res) => {
   const newProduct = new Product(req.body);
   await newProduct.save();

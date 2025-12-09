@@ -9,7 +9,6 @@ const razorpayInstance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// CREATE ORDER
 router.post("/create-order", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -21,7 +20,7 @@ router.post("/create-order", async (req, res) => {
     }
 
     const options = {
-      amount: amount * 100, // convert to paise
+      amount: amount * 100,
       currency: "INR",
       receipt: "receipt#1",
     };
@@ -42,7 +41,6 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-// VERIFY PAYMENT
 router.post("/verify", (req, res) => {
   try {
     const {

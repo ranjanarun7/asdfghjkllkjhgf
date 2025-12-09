@@ -4,7 +4,6 @@ const User = require("../models/userModel");
 const axios = require("axios");
 const router = express.Router();
 
-/* CREATE FEEDBACK */
 router.post('/', async (req, res) => {
   try {
     const data = await Feedback.create(req.body);
@@ -36,7 +35,6 @@ router.get('/', async (req, res) => {
   res.json(feedback);
 });
 
-/* SAVE ANALYSIS */
 router.put('/:id/analyze', async (req, res) => {
   const updated = await Feedback.findByIdAndUpdate(
     req.params.id,

@@ -13,11 +13,18 @@ export const MarketplaceDetail = ({ onBack }) => {
         { id: "4", _id: "4", name: "Organic Honey (500g)", price: 600, category: "Food", image: "https://images.unsplash.com/photo-1587049359681-3676a82e3576?q=80&w=800&auto=format&fit=crop" },
     ];
 
-    // Helper to get quantity of an item in cart
-    const getQuantity = (productId) => {
-        const item = cart.find((i) => i.productId === productId || i.id === productId || i._id === productId);
-        return item ? item.quantity : 0;
-    };
+    const cartItems = Array.isArray(cart) ? cart : [];
+
+const getQuantity = (productId) => {
+    const item = cartItems.find(
+        (i) =>
+            i.productId === productId ||
+            i.id === productId ||
+            i._id === productId
+    );
+    return item ? item.quantity : 0;
+};
+
 
     return (
         <div className="min-h-screen bg-neutral pb-20 pt-24">

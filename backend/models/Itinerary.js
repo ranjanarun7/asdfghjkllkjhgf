@@ -13,7 +13,7 @@ const ItinerarySchema = new mongoose.Schema({
 
   cities: { type: [String], default: [] },
 
-  status: { type: String, default: "completed" },
+  status: { type: String, default: "On going" },
 
   thumbnail: { type: String, default: "" },
 

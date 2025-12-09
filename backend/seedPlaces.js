@@ -1,4 +1,3 @@
-// seed.js
 const mongoose = require("mongoose");
 const Place = require("./models/placeModel");
 const dotenv = require('dotenv');
@@ -9,12 +8,8 @@ async function seed() {
  await mongoose.connect(mongoURL)
      console.log("Connected to MongoDB for seeding places")
     console.log("✅ MongoDB connected");
-
-    // 2. Purane places clean (optional)
     await Place.deleteMany({});
     console.log("🧹 Old places cleared");
-
-    // 3. Naye places insert karo (with images + videos placeholders)
     const places = await Place.insertMany([
       {
         name: "Netarhat",
@@ -30,7 +25,6 @@ async function seed() {
           "https://i.redd.it/v7myyec9ja7b1.jpg",
         image4:
           "https://1.bp.blogspot.com/-2nwsInI_Kck/YOdDnyb7T9I/AAAAAAAACjw/dNoffJJhCa4GyM-8Ejc7cdhqlTsuZcDDwCLcBGAsYHQ/s1080/Ram_s%2BInstagram%2Bphoto_%2B_Biggest%2Bwater%2Bfalls%2Bin%2BJharkhand%2B_%2BLodh%2Bwater%2BFalls.__CIf23BrHEaE%2528JPG%2529.jpg",
-        // Demo YouTube URLs – tum baad me apne real vlog/shorts daal sakte ho
         video1: "https://www.youtube.com/watch?v=5RJNr-YsEBs",
         video2: "https://www.youtube.com/watch?v=NwrqCPpYFio",
         category: "Hill Station",
@@ -166,10 +160,6 @@ async function seed() {
     ]);
 
     console.log("✅ Places inserted");
-
-    // 4. Ab nearbyPlaces ke ObjectId set karte hain
-
-    // Helper: name se place find karo
     const byName = (name) => places.find((p) => p.name === name);
 
     const netarhat = byName("Netarhat");
@@ -178,13 +168,6 @@ async function seed() {
     const hundru = byName("Hundru Falls");
     const deoghar = byName("Deoghar");
     const parasnath = byName("Prashnath Hills");
-
-    // Logical nearby mapping:
-    // Netarhat <-> Betla (same belt)
-    // Patratu <-> Hundru (Ranchi side)
-    // Hundru also connects to Netarhat (longer trip combo)
-    // Deoghar: abhi standalone
-
     await Place.bulkWrite([
       {
         updateOne: {

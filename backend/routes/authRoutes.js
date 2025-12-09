@@ -8,14 +8,11 @@ const router = express.Router();
 // SIGNUP
 router.post("/signup", async (req, res) => {
   const { name, email, password, phone, location, bio, coverPhoto, avatar } = req.body;
-
   const existing = await User.findOne({ email });
   if (existing) {
     return res.json({ success: false, message: "User already exists" });
   }
-
   const hashed = await bcrypt.hash(password, 10);
-
   const newUser = new User({
     name,
     email,
@@ -69,7 +66,7 @@ router.post("/login", async (req, res) => {
   });
 });
 
-// ✅ Update profile
+// Update profile
 router.put("/:id", async (req, res) => {
   try {
     const { name, email, phone, location, bio, avatar, coverPhoto } = req.body;
@@ -77,7 +74,7 @@ router.put("/:id", async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       { name, email, phone, location, bio, avatar, coverPhoto },
-      { new: true } // naya updated doc return hoga
+      { new: true }
     );
 
     if (!updatedUser) {

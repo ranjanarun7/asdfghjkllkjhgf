@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
     const filter = {};
 
     if (category) {
-      filter.category = { $regex: new RegExp(category, "i") }; // case-insensitive
+      filter.category = { $regex: new RegExp(category, "i") };
     }
 
     const places = await Place.find(filter);
@@ -19,16 +19,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-
-
-// Add new place
 router.post("/create", async (req, res) => {
   const newPlace = new Place(req.body);
   await newPlace.save();
   res.json({ message: "Place added", newPlace });
 });
 
-// ✅ Correct: Get single place WITH NEARBY PLACES populated
 router.get("/details/:id", async (req, res) => {
   try {
     const place = await Place.findById(req.params.id).populate("nearbyPlaces");
@@ -38,7 +34,6 @@ router.get("/details/:id", async (req, res) => {
   }
 });
 
-// Get single place WITHOUT populate
 router.get("/:id", async (req, res) => {
   try {
     const place = await Place.findById(req.params.id);
@@ -48,7 +43,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Edit
 router.put("/:id", async (req, res) => {
   try {
     const updated = await Place.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -58,7 +52,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete
 router.delete("/:id", async (req, res) => {
   try {
     await Place.findByIdAndDelete(req.params.id);
@@ -68,7 +61,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-  // Add review to a place
 router.post("/:id/reviews", async (req, res) => {
   try {
     const place = await Place.findById(req.params.id);
@@ -83,7 +75,6 @@ router.post("/:id/reviews", async (req, res) => {
   }
 });
 
-// Get reviews for a place
 router.get("/:id/reviews", async (req, res) => {
   try {
     const place = await Place.findById(req.params.id);

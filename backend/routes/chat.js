@@ -9,8 +9,6 @@ const ai = new GoogleGenAI({
 router.post("/", async (req, res) => {
   try {
 
-    //console.log("Incoming:", req.body);
-
     const { message, language, history = [] } = req.body;
 
     if (!process.env.GEMINI_API_KEY) {
@@ -34,7 +32,6 @@ router.post("/", async (req, res) => {
     });
 
     const reply = result.text;
-    //console.log("Gemini reply:", reply);
 
     res.json({ reply });
 

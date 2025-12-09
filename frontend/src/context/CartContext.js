@@ -22,7 +22,20 @@ export const CartProvider = ({ children }) => {
 
     fetch(`${process.env.REACT_APP_BACKEND_URL}/cart/${userId}`)
       .then((res) => res.json())
-      .then((data) => setCart(data))
+      .then((data) => {
+    // If backend sends { items: [...] }
+    if (Array.isArray(data)) {
+        setCart(data);
+    } else if (Array.isArray(data.items)) {
+        setCart(data.items);
+    } else if (Array.isArray(data.cart)) {
+        setCart(data.cart);
+    } else {
+        console.error("Invalid cart format:", data);
+        setCart([]);
+    }
+})
+
       .catch((err) => console.log("Cart fetch error:", err));
   };
 
@@ -41,7 +54,16 @@ export const CartProvider = ({ children }) => {
     });
 
     const updated = await res.json();
+    if (Array.isArray(updated)) {
     setCart(updated);
+} else if (Array.isArray(updated.items)) {
+    setCart(updated.items);
+} else if (Array.isArray(updated.cart)) {
+    setCart(updated.cart);
+} else {
+    console.error("Invalid cart update:", updated);
+}
+
   };
 
   // REMOVE
@@ -55,7 +77,16 @@ export const CartProvider = ({ children }) => {
     });
 
     const updated = await res.json();
+    if (Array.isArray(updated)) {
     setCart(updated);
+} else if (Array.isArray(updated.items)) {
+    setCart(updated.items);
+} else if (Array.isArray(updated.cart)) {
+    setCart(updated.cart);
+} else {
+    console.error("Invalid cart update:", updated);
+}
+
   };
 
   // INCREASE
@@ -69,7 +100,16 @@ export const CartProvider = ({ children }) => {
     });
 
     const updated = await res.json();
+    if (Array.isArray(updated)) {
     setCart(updated);
+} else if (Array.isArray(updated.items)) {
+    setCart(updated.items);
+} else if (Array.isArray(updated.cart)) {
+    setCart(updated.cart);
+} else {
+    console.error("Invalid cart update:", updated);
+}
+
   };
 
   // DECREASE
@@ -83,7 +123,16 @@ export const CartProvider = ({ children }) => {
     });
 
     const updated = await res.json();
+    if (Array.isArray(updated)) {
     setCart(updated);
+} else if (Array.isArray(updated.items)) {
+    setCart(updated.items);
+} else if (Array.isArray(updated.cart)) {
+    setCart(updated.cart);
+} else {
+    console.error("Invalid cart update:", updated);
+}
+
   };
 
   const clearCart = () => {

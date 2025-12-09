@@ -2,11 +2,9 @@ const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 
 const router = express.Router();
-
 const Cart = require("../models/cartModel");
 const Order = require("../models/order");
 
-// ✅ CREATE ORDER + PAYMENT ID
 router.post("/create-order", async (req, res) => {
   const orderId = "ORD-" + uuidv4().slice(0, 8);
   const paymentId = "PAY-" + uuidv4().slice(0, 8);
@@ -14,7 +12,6 @@ router.post("/create-order", async (req, res) => {
   res.json({ orderId, paymentId });
 });
 
-// ✅ CONFIRM PAYMENT (from blockchain later)
 router.post("/confirm-payment", async (req, res) => {
   const { userId, orderId, paymentId, address } = req.body;
 
@@ -29,8 +26,6 @@ router.post("/confirm-payment", async (req, res) => {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-
-    // ✅ Save Order to DB
     const newOrder = new Order({
       userId,
       orderId,
@@ -41,8 +36,6 @@ router.post("/confirm-payment", async (req, res) => {
     });
 
     await newOrder.save();
-
-    // ✅ Clear cart after order success
     cart.items = [];
     await cart.save();
 
@@ -53,7 +46,6 @@ router.post("/confirm-payment", async (req, res) => {
   }
 });
 
-// ✅ GET ORDER HISTORY BY USER
 router.get("/history/:userId", async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId })

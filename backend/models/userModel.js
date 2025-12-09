@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     default:
       "https://images.unsplash.com/photo-1626246473523-289552cb874a?q=80&w=1600&auto=format&fit=crop"
   },
-
+  isGuideVerified: { type: Boolean, default: false },
   isAdmin: { type: Boolean, default: false }
 });
 
