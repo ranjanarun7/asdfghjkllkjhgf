@@ -10,7 +10,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-h1, h2, h3 {
+
+h1,
+h2,
+h3 {
   @apply font-playfair;
 }
 
@@ -18,7 +21,7 @@ h1, h2, h3 {
   .btn-primary {
     @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-300;
   }
-  
+
   .btn-secondary {
     @apply bg-accent text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-300;
   }
@@ -49,22 +52,27 @@ h1, h2, h3 {
 .swiper-button-prev {
   top: 50%;
   transform: translateY(-50%);
-  color: #333 !important;              /* Arrow color */
+  color: #333 !important;
+  /* Arrow color */
   width: 30px !important;
   height: 30px !important;
-  background: white;        /* circle background */
+  background: white;
+  /* circle background */
   border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   padding: 5px;
 }
 
 .swiper-button-next {
-  right: -20px;   /* Move right arrow OUTSIDE */
+  right: -20px;
+  /* Move right arrow OUTSIDE */
 }
 
 .swiper-button-prev {
-  left: -20px;    /* Move left arrow OUTSIDE */
+  left: -20px;
+  /* Move left arrow OUTSIDE */
 }
+
 /* Disable click on all slides */
 .swiper-slide {
   pointer-events: none;
@@ -76,11 +84,103 @@ h1, h2, h3 {
 }
 
 /* Mobile Fix */
-@media (max-width:768px){
-  .h-screen { height: auto !important; }
+@media (max-width:768px) {
+  .h-screen {
+    height: auto !important;
+  }
 }
-@media(max-width:640px){
-  h1 { font-size: 2rem!important;}
-  h2 { font-size: 1.6rem!important;}
-  p { font-size: 0.9rem!important;}
+
+@media(max-width:640px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+
+  h2 {
+    font-size: 1.6rem !important;
+  }
+
+  p {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ACCESSIBILITY STYLES */
+
+/* High Contrast Mode - Yellow on Black Theme */
+.high-contrast {
+  /* Set base variables */
+  --hc-bg: #000000;
+  --hc-text: #FFFF00;
+  --hc-accent: #00FFFF;
+  /* Cyan for links */
+
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+}
+
+/* Force colors on containers and text elements */
+.high-contrast *:not(img):not(video):not(svg) {
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+  border-color: var(--hc-text) !important;
+  box-shadow: none !important;
+}
+
+/* Specific component overrides for visibility */
+.high-contrast a {
+  color: var(--hc-accent) !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast button,
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea,
+.high-contrast .btn-primary,
+.high-contrast .btn-secondary {
+  border: 2px solid var(--hc-text) !important;
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+}
+
+/* Make SVGs (Icons) visible */
+.high-contrast svg {
+  fill: var(--hc-text) !important;
+  stroke: var(--hc-text) !important;
+}
+
+/* Images: preserve content but add border */
+.high-contrast img {
+  filter: grayscale(100%) contrast(120%);
+  border: 2px solid var(--hc-text) !important;
+}
+
+/* Dyslexia Friendly Font */
+.font-dyslexic {
+  font-family: 'Comic Sans MS', 'Verdana', sans-serif !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.05em !important;
+}
+
+.font-dyslexic p,
+.font-dyslexic a,
+.font-dyslexic button {
+  word-spacing: 0.1em;
+}
+
+/* Reduce Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Screen Reader Focus Mode */
+.screen-reader-mode *:focus {
+  outline: 4px solid #F59E0B !important;
+  /* Amber outline */
+  outline-offset: 4px !important;
+  background-color: rgba(245, 158, 11, 0.1) !important;
 }

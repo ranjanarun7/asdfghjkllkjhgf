@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import NearbyServiceModal from "../components/NearbyServiceModal";
 import { motion } from "framer-motion";
 import {
   MapPin,
@@ -33,6 +34,8 @@ function PlaceDetailsPage() {
   const [place, setPlace] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
 
   const [tracking, setTracking] = useState(false);
   const [coords, setCoords] = useState(null);
@@ -171,8 +174,8 @@ function PlaceDetailsPage() {
     const a =
       Math.sin(dLat / 2) ** 2 +
       Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) ** 2;
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) ** 2;
 
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
@@ -252,11 +255,10 @@ function PlaceDetailsPage() {
 
   const openInGoogleMaps = () => {
     if (coords) {
-      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${
-        coords.latitude
-      },${coords.longitude}&destination=${encodeURIComponent(
-        place.location
-      )}&travelmode=driving`;
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${coords.latitude
+        },${coords.longitude}&destination=${encodeURIComponent(
+          place.location
+        )}&travelmode=driving`;
       window.open(googleMapsUrl, "_blank");
     } else {
       alert("Current location not available.");
@@ -423,9 +425,8 @@ function PlaceDetailsPage() {
               {images.map((_, i) => (
                 <div
                   key={i}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    current === i ? "bg-blue-600 w-5" : "bg-gray-300"
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-all ${current === i ? "bg-blue-600 w-5" : "bg-gray-300"
+                    }`}
                 />
               ))}
             </div>
@@ -570,14 +571,13 @@ function PlaceDetailsPage() {
         </div>
 
         {/* Real-time Navigation Card (Distance + Buttons) */}
-        <div className="bg-[#2E2E2E] text-black p-6 rounded-xl shadow-lg max-w-3xl mx-2 mt-10 border border-gray-700">
+        <div className="bg-white text-black p-6 rounded-xl shadow-lg max-w-3xl mx-2 mt-10 border border-gray-700">
           <h2 className="text-2xl font-bold mb-3">Real-time Navigation</h2>
 
           <div className="flex items-center space-x-2">
             <span
-              className={`w-3 h-3 rounded-full ${
-                tracking ? "bg-green-500" : "bg-gray-400"
-              }`}
+              className={`w-3 h-3 rounded-full ${tracking ? "bg-green-500" : "bg-gray-400"
+                }`}
             />
             <span className="text-black font-medium">
               {tracking ? "Live tracking active" : "Live tracking inactive"}
@@ -592,7 +592,7 @@ function PlaceDetailsPage() {
             {!tracking ? (
               <button
                 onClick={startTracking}
-                className="flex items-center justify-center gap-2 bg-[#3C3C3C] hover:bg-[#4A4A4A] px-6 py-3 rounded-lg flex-1 transition-all"
+                className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-[#4A4A4A] px-6 py-3 rounded-lg flex-1 transition-all"
               >
                 <PlusCircle size={20} />
                 <span className="font-semibold">Start Live Tracking</span>
@@ -640,27 +640,24 @@ function PlaceDetailsPage() {
           Find essential services and amenities near {place.name} to make your
           visit comfortable and safe.
         </p>
-        <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {services.map((s) => (
             <motion.button
               key={s.id}
-              className="group flex items-center gap-4 mt-2 text-black rounded-xl border border-gray-700 bg-gray-900/60 px-6 py-6 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-shadow hover:shadow-lg"
-              whileHover={{
-                y: -10,
-                scale: 1.02,
-                boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+              onClick={() => {
+                if (!coords && !tracking) startTracking(); // Try to get location if missing
+                setSelectedService(s);
+                setShowServiceModal(true);
               }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              aria-label={s.label}
+              className="group flex flex-col items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-transparent border border-transparent group-hover:border-teal-400">
-                <s.Icon className="h-6 w-6 text-teal-300" />
+              <div className="p-3 rounded-full bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                <s.Icon className="h-8 w-8" />
               </div>
-
-              <span className="text-left">
-                <div className="text-base font-semibold text-black">
-                  {s.label}
-                </div>
+              <span className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">
+                {s.label}
               </span>
             </motion.button>
           ))}
@@ -758,6 +755,14 @@ function PlaceDetailsPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Service Finder Modal */}
+      <NearbyServiceModal
+        isOpen={showServiceModal}
+        onClose={() => setShowServiceModal(false)}
+        userLocation={coords}
+        serviceType={selectedService}
+      />
 
       <Footer />
     </div>

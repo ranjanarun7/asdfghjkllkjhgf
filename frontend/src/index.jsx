@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import "leaflet/dist/leaflet.css";
 import "./fixLeafletIcon";
+import './i18n';
 import LanguageProvider from './context/LanguageContext';
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
