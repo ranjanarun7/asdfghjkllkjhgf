@@ -9,8 +9,8 @@ const OrderSuccess = () => {
   const navigate = useNavigate();
   const { clearCart } = useCart();
   useEffect(() => {
-  clearCart();
-}, []);
+    clearCart();
+  }, []);
 
 
   return (
@@ -22,6 +22,12 @@ const OrderSuccess = () => {
 
         <p className="text-lg">Order ID: {state.orderId}</p>
         <p className="text-lg">Payment ID: {state.paymentId}</p>
+        {state.txHash && (
+          <div className="mt-4 p-4 bg-gray-100 rounded text-sm break-all">
+            <p className="font-bold text-gray-700">Blockchain Transaction:</p>
+            <p className="text-blue-600">{state.txHash}</p>
+          </div>
+        )}
 
         <button
           className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg"

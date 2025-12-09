@@ -22,7 +22,14 @@ export const CartProvider = ({ children }) => {
 
     fetch(`${process.env.REACT_APP_BACKEND_URL}/cart/${userId}`)
       .then((res) => res.json())
-      .then((data) => setCart(data))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCart(data);
+        } else {
+          console.warn("Cart data is not an array, defaulting to empty:", data);
+          setCart([]);
+        }
+      })
       .catch((err) => console.log("Cart fetch error:", err));
   };
 
@@ -87,13 +94,13 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = () => {
-  setCart([]);
-};
+    setCart([]);
+  };
 
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity,clearCart }}
+      value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart }}
     >
       {children}
     </CartContext.Provider>

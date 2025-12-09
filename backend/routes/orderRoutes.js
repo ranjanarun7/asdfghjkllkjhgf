@@ -44,7 +44,8 @@ router.post("/confirm-payment", async (req, res) => {
     await newOrder.save();
 
     // 2. Save to Ledger (Fire and Forget)
-    recordTransaction({
+    // 2. Save to Ledger (Await to get hash)
+    const ledgerTx = await recordTransaction({
       type: 'PAYMENT',
       orderId: newOrder.orderId,
       paymentId: newOrder.paymentId,
@@ -57,7 +58,11 @@ router.post("/confirm-payment", async (req, res) => {
     cart.items = [];
     await cart.save();
 
-    res.json({ success: true, message: "Order placed successfully" });
+    res.json({
+      success: true,
+      message: "Order placed successfully",
+      txHash: ledgerTx ? ledgerTx.txHash : null
+    });
   } catch (err) {
     console.error("Order save failed:", err);
     res.status(500).json({ error: "Order not saved" });

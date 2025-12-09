@@ -33,7 +33,7 @@ router.post("/remove", async (req, res) => {
   const { userId, productId } = req.body;
 
   const cart = await Cart.findOne({ userId });
-  if (!cart) return res.json({ items: [] });
+  if (!cart) return res.json([]);
 
   cart.items = cart.items.filter((item) => item.productId !== productId);
 
@@ -72,7 +72,7 @@ router.post("/decrease", async (req, res) => {
 // GET CART
 router.get("/:userId", async (req, res) => {
   const cart = await Cart.findOne({ userId: req.params.userId });
-  if (!cart) return res.json({ items: [] });
+  if (!cart) return res.json([]);
   res.json(cart.items);
 });
 
