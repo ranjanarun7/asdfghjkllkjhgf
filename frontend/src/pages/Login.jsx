@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -6,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const redirectTo = location.state?.from || "/";
@@ -104,16 +106,23 @@ const Login = () => {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                 Password
               </label>
               <input
-                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
-                type="password"
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all pr-12"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
+              <button
+                type="button"
+                className="absolute right-3 top-[38px] text-gray-400 hover:text-green-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
             <div className="flex justify-end">
