@@ -178,10 +178,10 @@ export const GuideVerification = () => {
                 <div className="container mx-auto max-w-6xl">
 
                     <button
-                        onClick={() => navigate('/profile')}
+                        onClick={() => navigate('/')}
                         className="mb-8 flex items-center gap-2 text-gray-800 font-medium hover:text-primary"
                     >
-                        <ArrowLeft size={20} /> Back to Profile
+                        <ArrowLeft size={20} /> Back to Home
                     </button>
 
                     <div className="text-center mb-12">
