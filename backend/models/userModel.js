@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
       "https://images.unsplash.com/photo-1626246473523-289552cb874a?q=80&w=1600&auto=format&fit=crop"
   },
 
-  isAdmin: { type: Boolean, default: false }
+  isAdmin: { type: Boolean, default: false },
+  googleId: { type: String },
+  facebookId: { type: String },
+  twitterId: { type: String }
 });
 
 module.exports = mongoose.model("User", userSchema);

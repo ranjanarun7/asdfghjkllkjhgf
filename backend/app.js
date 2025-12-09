@@ -39,20 +39,56 @@ app.use(cors({
 
 app.use(express.json());
 
+// Passport Config
+require('./config/passport');
+const session = require('express-session');
+const passport = require('passport');
+
+app.use(session({
+  secret: 'secret_key_session', // Change this to a secure random string in production
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Default Route
 app.get('/', (req, res) => {
   res.send('Welcome to the Jharkhand Tourism Backend!');
 });
 
 // Connect to MongoDB and Seed Data
+// Connect to MongoDB and Seed Data
 mongoose
-  .connect(mongoURL)
+  .connect(mongoURL, {
+    serverSelectionTimeoutMS: 5000
+  })
   .then(async () => {
     console.log("Connected to MongoDB");
 
     //await seedInitialPlaces(); // seed run here
   })
   .catch((err) => console.log(err));
+
+mongoose.connection.on('error', err => {
+  console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected');
+});
+
+// Simple DB Test Route
+app.get('/test-db', async (req, res) => {
+  try {
+    const User = require('./models/userModel');
+    const count = await User.countDocuments();
+    res.json({ success: true, message: "DB Connection OK", userCount: count });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // Routes
 app.use("/uploads", express.static("uploads"));
@@ -73,5 +109,5 @@ app.use('/api/payment', paymentRoutes)
 // Start Server
 app.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
-  await checkConnection();
+  // await checkConnection();
 });

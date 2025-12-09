@@ -4,6 +4,48 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
 const router = express.Router();
+const passport = require('passport');
+
+// Helper to generate token
+const generateToken = (user) => {
+  return jwt.sign({ id: user._id }, "SECRET123", { expiresIn: "7d" });
+};
+
+// --- Google Auth ---
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    // Successful authentication
+    const token = generateToken(req.user);
+    res.redirect(`http://localhost:3000/?token=${token}&userId=${req.user._id}&isAdmin=${req.user.isAdmin}`);
+  }
+);
+
+/*
+// --- Facebook Auth ---
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+router.get('/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  (req, res) => {
+    const token = generateToken(req.user);
+    res.redirect(`http://localhost:3000/?token=${token}&userId=${req.user._id}&isAdmin=${req.user.isAdmin}`);
+  }
+);
+
+// --- Twitter Auth ---
+router.get('/twitter', passport.authenticate('twitter'));
+
+router.get('/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  (req, res) => {
+    const token = generateToken(req.user);
+    res.redirect(`http://localhost:3000/?token=${token}&userId=${req.user._id}&isAdmin=${req.user.isAdmin}`);
+  }
+);
+*/
 
 // SIGNUP
 router.post("/signup", async (req, res) => {

@@ -38,7 +38,35 @@ const Login = () => {
     }
 
 
+
   };
+
+  // Check for social login token
+  React.useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const token = query.get("token");
+    const userId = query.get("userId");
+    const isAdmin = query.get("isAdmin");
+
+    if (token && userId) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+
+      // Construct a minimal user object for context
+      const user = {
+        _id: userId,
+        isAdmin: isAdmin === 'true'
+      };
+
+      login(user); // Update auth context
+
+      if (user.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate(redirectTo);
+      }
+    }
+  }, [location, login, navigate, redirectTo]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 font-inter">
@@ -92,6 +120,21 @@ const Login = () => {
 
             <button className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all active:scale-95">
               Sign In
+            </button>
+
+            <div className="flex items-center my-4">
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="mx-4 text-gray-400 text-sm">OR</span>
+              <div className="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google`}
+              className="w-full bg-white border border-gray-200 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-50 flex items-center justify-center gap-3 transition-all active:scale-95"
+            >
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google logo" />
+              Sign in with Google
             </button>
 
             <p className="text-center text-sm text-gray-500 mt-6">
